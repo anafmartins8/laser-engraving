@@ -1,11 +1,80 @@
 .App {
-  text-align: center;
+  background-color: #2C2C2C;
+  color: #FFFFFF;
+  /*height: 100vh;*/
+}
+
+.App > * {
+  padding-left: 75px;
+  padding-right: 75px;
+}
+
+img {
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(252deg) brightness(140%) contrast(103%);
+  height: 40px;
+  margin-right: 15px;
+}
+
+.title {
+  border-left: 2px solid #FFFFFF;
+  padding-left: 15px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+header {
+  background-color: #212121;
+  height: 70px;
+  display: flex;
+  justify-content: space-between;
+}
+
+header > *, footer > *, .zoom-container > * {
+  display: flex;
+  align-items: center;
+}
+/*
+main {
+  height: calc(100vh - 75px - 40px - 40px);
+}*/
+
+footer {
+  margin-top: 40px;
+  background-color: #212121;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+}
+
+time {
+  text-transform: lowercase;
 }
 
 .App-logo {
   height: 40vmin;
   pointer-events: none;
 }
+
+.image-container {
+  border: 2px solid #2FA5DC;
+  border-radius: 2px;
+  box-sizing: border-box;
+  height: 400px;
+  background-color: #707070;
+  margin-top: 40px;
+}
+
+.zoom-container {
+  display: flex;
+  justify-content: center;
+  height: 60px;
+}
+
+.zoom-container > * {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
@@ -35,4 +104,84 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.work-container {
+  height: 357px;
+}
+
+
+/*  TABS  */
+
+.tab-list-item {
+  display: inline-block;
+  list-style: none;
+  padding: 0.4rem 1.5rem;
+  margin-bottom: 0.1rem;
+  padding-top: 8.2px;
+  border-top-right-radius: 2px;
+  border-top-left-radius: 2px;
+}
+
+.tab-list-active {
+  background-color: #F8B322;
+  padding: 0.5rem 1.5rem;
+  margin-bottom: -0.1rem;
+}
+
+ol {
+  padding-inline-start: 0px;
+  margin: 0;
+}
+
+ol > li {
+  margin-right: 2px;
+  cursor: pointer;
+  background-color: #4D4D4D;
+}
+
+.tab-content {
+  border: 2px solid #F8B322;
+  border-radius: 2px;
+  height: 323px;
+  box-sizing: border-box;
+}
+
+
+
+/* BUTTONS */
+
+button {
+  height: 30px;
+  width: 50px;
+  box-sizing: border-box;
+  cursor: pointer;
+  border-radius: 2px;
+  border: none;
+}
+
+.button-header {
+  border: 1px solid #FFFFFF;
+  color: #FFFFFF;
+  background-color: #212121;
+}
+
+.button-header:hover {
+  background-color: #FFFFFF;
+  color: #212121;
+}
+
+.button-info {
+  border: 1px solid #2FA5DC;
+  color: #2FA5DC;
+  background-color: #2C2C2C;
+}
+
+.button-info:hover {
+  background-color: #2FA5DC;
+  color: #FFFFFF;
+}
+
+.button-info svg {
+  font-size: 1.4em;
 }
