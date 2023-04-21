@@ -5,7 +5,7 @@ function Header() {
     <header>
       <div>
         <Logo />
-        <div class="title">GISLOTICA OTR SCANNER</div>
+        <div className="title">GISLOTICA OTR SCANNER</div>
       </div>
       <div>
         <button type="button" className="button-header">

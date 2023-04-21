@@ -1,14 +1,16 @@
 import Tabs from "./Tabs";
+import BottomSidewall from "./BottomSidewall";
+import Mark from "./Mark";
 
 function WorkArea() {
   return (
     <div className="work-container">
       <Tabs>
         <div label="Bottom Sidewall">
-          See ya later, <em>Alligator</em>!
+          <BottomSidewall />
         </div>
         <div label="Mark">
-          After 'while, <em>Crocodile</em>!
+          <Mark />
         </div>
       </Tabs>
     </div>
@@ -16,3 +18,5 @@ function WorkArea() {
 }
 
 export default WorkArea;
+
+// https://www.digitalocean.com/community/tutorials/react-tabs-component

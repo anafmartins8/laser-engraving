@@ -1,4 +1,5 @@
 import "./App.css";
+//import "bootstrap/dist/css/bootstrap.min.css";
 import Header from "./layout/Header";
 import Footer from "./layout/Footer";
 import ImageArea from "./layout/ImageArea";

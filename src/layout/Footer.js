@@ -8,7 +8,7 @@ function Footer() {
         <Clock
           format={"ddd, D MMM YYYY HH:mm:ss"}
           ticking={true}
-          timezone={"PT/Pacific"}
+          timezone={"Portugal"}
         />
       </div>
     </footer>
