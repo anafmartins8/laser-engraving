@@ -513,10 +513,6 @@ input:checked + .slider:before {
   width: 7%;
 }
 
-.teaching-components .left-component .component-title {
-  
-}
-
 .teaching-components .right-component {
   width: 89%;
 }
@@ -617,9 +613,4 @@ table tbody svg {
 table tbody svg:hover {
   cursor: pointer;
   color: #CCCCCC;
-}
-
-.work-container2 .tab-content:has(>.teaching-components) {
-    display: grid;
-    align-content: start;
 }
