@@ -31,14 +31,20 @@ function ImageArea() {
     let pointSecLine = 0.0;
     let rectLine = 0;
     let pointRect = 0.0;
-    let line1, line2;
+    let line1, line2, rect;
     let line1mouse, line2mouse, line1mousetranslation, line2mousetranslation;
+    let rectx, recty;
+    let recth = 0.0;
+    let rectw = 0.0;
+    let drawRect = false;
+    let drawRectDisable = false;
+    let rectmouse = false;
 
     //lines
 
     p5.preload = () => {
       p5.loadImage(
-        "http://localhost:3000/images/SW_img.jpeg",
+        "http://localhost:3002/images/SW_img.jpeg",
         (p1) => (img = p1),
         (e) => console.log("error", e),
         (is) => (initialScale = is)
@@ -61,6 +67,7 @@ function ImageArea() {
       console.log("coordenadas iniciais do centro da imagem", x, y);
       line1 = new Line();
       line2 = new Line();
+      rect = new Rect();
     };
 
     class Line {
@@ -86,23 +93,41 @@ function ImageArea() {
       }
 
       rect(yline) {
-        let translateLine = false;
-        if (
+        return (
           p5.pmouseX > pointRect - 10 &&
           p5.pmouseX < pointRect + 10 &&
           p5.pmouseY > yline - 10 &&
           p5.pmouseY < yline + 10
-        ) {
-          translateLine = true;
-          console.log("rect");
-        }
-        return translateLine;
+        );
       }
 
       fill_rect() {
         p5.strokeWeight(0);
         p5.fill(245, 128, 0, 30);
         p5.rect(topx, pointLine, tow, pointSecLine - pointLine);
+      }
+    }
+
+    class Rect {
+      draw_rect(x, y, w, h) {
+        p5.strokeWeight(1);
+        p5.stroke("#F58000");
+        p5.fill(245, 128, 0, 30);
+        p5.rect(x, y, w, h);
+      }
+
+      rect_move() {
+        p5.fill(255);
+        p5.rect(rectx + rectw / 2 - 3, recty + recth / 2 - 3, 6, 6);
+      }
+
+      recttranslate() {
+        return (
+          p5.pmouseX > rectx + rectw / 2 - 10 &&
+          p5.pmouseX < rectx + rectw / 2 + 10 &&
+          p5.pmouseY > recty + recth / 2 - 10 &&
+          p5.pmouseY < recty + recth / 2 + 10
+        );
       }
     }
 
@@ -126,6 +151,11 @@ function ImageArea() {
         line2mouse = line2.rect(pointSecLine);
         line2.fill_rect();
       }
+      if (drawRect) {
+        rect.draw_rect(rectx, recty, rectw, recth);
+        rect.rect_move();
+        rectmouse = rect.recttranslate();
+      }
     };
 
     p5.doubleClicked = () => {
@@ -145,6 +175,10 @@ function ImageArea() {
     p5.mouseReleased = () => {
       line1mousetranslation = false;
       line2mousetranslation = false;
+
+      if (drawRect) {
+        drawRectDisable = true;
+      }
 
       if (isOutSideOfBounds() || isOutSideOfImage()) return;
 
@@ -207,46 +241,66 @@ function ImageArea() {
       if (isOutSideOfBounds()) return;
       //if (isOutSideOfImage()) return;
       console.log("LINE", line1mouse);
-      if (p5.mouseIsPressed) {
-        if ((line1mouse || line1mousetranslation) && !isOutSideOfImage()) {
-          pointLine += p5.mouseY - p5.pmouseY;
-          line1mousetranslation = true;
-          if (line1.ylimit(pointLine)) {
-            //
-            if (pointLine < topy) {
-              //limite sup
-              pointLine = topy;
-            } else {
-              pointLine = topy + toh;
-            }
+      if (canvasMode === 1 && !drawRectDisable) {
+        // modo rect
+        if (p5.mouseIsPressed) {
+          if (!drawRect) {
+            rectx = p5.mouseX;
+            recty = p5.mouseY;
           }
-        } else if (
-          (line2mouse || line2mousetranslation) &&
-          !isOutSideOfImage()
-        ) {
-          pointSecLine += p5.mouseY - p5.pmouseY;
-          line2mousetranslation = true;
-          if (line2.ylimit(pointSecLine)) {
-            //
-            if (pointSecLine < topy) {
-              //limite sup
-              pointSecLine = topy;
-            } else {
-              pointSecLine = topy + toh;
+          drawRect = true;
+          rectw += p5.mouseX - p5.pmouseX;
+          recth += p5.mouseY - p5.pmouseY;
+          console.log(rectx, recty, rectw, recth, drawRect);
+        }
+      } else if (canvasMode === 1 && drawRectDisable) {
+        if (rectmouse) {
+          rectx += p5.mouseX - p5.pmouseX;
+          recty += p5.mouseY - p5.pmouseY;
+        }
+      } else if (canvasMode === 0) {
+        //modo drag
+        if (p5.mouseIsPressed) {
+          if ((line1mouse || line1mousetranslation) && !isOutSideOfImage()) {
+            pointLine += p5.mouseY - p5.pmouseY;
+            line1mousetranslation = true;
+            if (line1.ylimit(pointLine)) {
+              //
+              if (pointLine < topy) {
+                //limite sup
+                pointLine = topy;
+              } else {
+                pointLine = topy + toh;
+              }
             }
+          } else if (
+            (line2mouse || line2mousetranslation) &&
+            !isOutSideOfImage()
+          ) {
+            pointSecLine += p5.mouseY - p5.pmouseY;
+            line2mousetranslation = true;
+            if (line2.ylimit(pointSecLine)) {
+              //
+              if (pointSecLine < topy) {
+                //limite sup
+                pointSecLine = topy;
+              } else {
+                pointSecLine = topy + toh;
+              }
+            }
+          } else if (!line1mousetranslation && !line2mousetranslation) {
+            // Update the values of tox and toy
+            tox += p5.mouseX - p5.pmouseX;
+            toy += p5.mouseY - p5.pmouseY;
+            topx += p5.mouseX - p5.pmouseX;
+            topy += p5.mouseY - p5.pmouseY;
+
+            pointLine += p5.mouseY - p5.pmouseY;
+            pointSecLine += p5.mouseY - p5.pmouseY;
+
+            // Set isDragging to true
+            isDragging = true;
           }
-        } else if (!line1mousetranslation && !line2mousetranslation) {
-          // Update the values of tox and toy
-          tox += p5.mouseX - p5.pmouseX;
-          toy += p5.mouseY - p5.pmouseY;
-          topx += p5.mouseX - p5.pmouseX;
-          topy += p5.mouseY - p5.pmouseY;
-
-          pointLine += p5.mouseY - p5.pmouseY;
-          pointSecLine += p5.mouseY - p5.pmouseY;
-
-          // Set isDragging to true
-          isDragging = true;
         }
       }
 
@@ -267,6 +321,11 @@ function ImageArea() {
           toh *= zoom + 1;
           pointLine -= zoom * (p5.mouseY - pointLine);
           pointSecLine -= zoom * (p5.mouseY - pointSecLine);
+          rectx -= zoom * (p5.mouseX - rectx);
+          recty -= zoom * (p5.mouseY - recty);
+          rectw *= zoom + 1;
+          recth *= zoom + 1;
+
           zoomScale = tow / wi;
           //console.log("Zoom Scale:", topx, topy, toh, tow, zoomScale);
         }
@@ -291,6 +350,10 @@ function ImageArea() {
           tow /= zoom + 1;
           pointLine += (zoom / (zoom + 1)) * (p5.mouseY - pointLine);
           pointSecLine += (zoom / (zoom + 1)) * (p5.mouseY - pointSecLine);
+          rectx += (zoom / (zoom + 1)) * (p5.mouseX - rectx);
+          recty += (zoom / (zoom + 1)) * (p5.mouseY - recty);
+          rectw /= zoom + 1;
+          recth /= zoom + 1;
           zoomScale = tow / wi;
           //console.log("Zoom Scale:", topx, topy, toh, tow, zoomScale);
         }
