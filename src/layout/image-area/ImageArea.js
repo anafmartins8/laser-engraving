@@ -131,8 +131,10 @@ function ImageArea() {
     p5.doubleClicked = () => {
       if (!isOutSideOfImage()) {
         if (drawLine) {
+          if (!drawSecLine) {
+            pointSecLine = p5.mouseY;
+          }
           drawSecLine = true;
-          pointSecLine = p5.mouseY;
         } else {
           pointLine = p5.mouseY;
           drawLine = true;
