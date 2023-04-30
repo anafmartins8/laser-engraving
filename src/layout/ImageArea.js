@@ -27,6 +27,7 @@ function ImageArea() {
     let rectLine = 0;
     let pointRect = 0.0;
     let line1, line2;
+    let line1mouse, line2mouse, line1mousetranslation, line2mousetranslation;
 
     //lines
 
@@ -40,6 +41,9 @@ function ImageArea() {
     };
 
     p5.setup = () => {
+      console.log(
+        "correeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      );
       p5.createCanvas(wcontainer, hcontainer);
       console.log("tamanho da div container", wcontainer, hcontainer);
       initialScale = wcontainer / img.width;
@@ -76,14 +80,17 @@ function ImageArea() {
       }
 
       rect(yline) {
+        let translateLine = false;
         if (
-          p5.pmouseX > pointRect - 3 &&
-          p5.pmouseX < pointRect + 3 &&
-          p5.pmouseY > yline - 3 &&
-          p5.pmouseY < yline + 3
+          p5.pmouseX > pointRect - 10 &&
+          p5.pmouseX < pointRect + 10 &&
+          p5.pmouseY > yline - 10 &&
+          p5.pmouseY < yline + 10
         ) {
+          translateLine = true;
           console.log("rect");
         }
+        return translateLine;
       }
 
       fill_rect() {
@@ -105,43 +112,14 @@ function ImageArea() {
       if (drawLine) {
         line1.draw_line(topx, pointLine, topx + tow, pointLine);
         line1.draw_rect(pointLine);
-        line1.rect(pointLine);
+        line1mouse = line1.rect(pointLine);
       }
       if (drawSecLine) {
         line2.draw_line(topx, pointSecLine, topx + tow, pointSecLine);
         line2.draw_rect(pointSecLine);
-        line2.rect(pointSecLine);
+        line2mouse = line2.rect(pointSecLine);
         line2.fill_rect();
       }
-      /*
-      //lines
-      if (drawLine) {
-        p5.strokeWeight(1);
-        p5.stroke("#F58000");
-        p5.line(topx, pointLine, topx + tow, pointLine);
-
-        if (topx <= 0 && topx + tow >= wcontainer) {
-          pointRect = wcontainer / 2;
-        } else if (topx > 0) {
-          pointRect = topx + (wcontainer - topx) / 2;
-        } else if (topx + tow < wcontainer) {
-          pointRect = (tow + topx) / 2;
-        }
-
-        p5.rect(pointRect - 3, pointLine - 3, 6, 6);
-        console.log("first line", pointLine, drawLine);
-      }
-      if (drawSecLine) {
-        p5.strokeWeight(1);
-        p5.stroke("#F58000");
-        p5.line(topx, pointSecLine, topx + tow, pointSecLine);
-        console.log("sec line", pointSecLine, drawSecLine);
-        console.log("OI", topx, tow);
-
-        p5.strokeWeight(0);
-        p5.fill(245, 128, 0, 30);
-        p5.rect(topx, pointLine, tow, pointSecLine - pointLine);
-      }*/
     };
 
     p5.doubleClicked = () => {
@@ -155,6 +133,9 @@ function ImageArea() {
     };
 
     p5.mouseReleased = () => {
+      line1mousetranslation = false;
+      line2mousetranslation = false;
+
       if (!isDragging) {
         /* sem translações - o ponto clidado está idemtificado */
         console.log("canvas coordenates", p5.mouseX, p5.mouseY);
@@ -203,20 +184,27 @@ function ImageArea() {
     p5.mouseDragged = () => {
       if (isOutSideOfBounds()) return;
       //if (isOutSideOfImage()) return;
+      console.log("LINE", line1mouse);
       if (p5.mouseIsPressed) {
-        // Update the values of tox and toy
-        tox += p5.mouseX - p5.pmouseX;
-        toy += p5.mouseY - p5.pmouseY;
-        topx += p5.mouseX - p5.pmouseX;
-        topy += p5.mouseY - p5.pmouseY;
+        if (line1mouse || line1mousetranslation) {
+          pointLine += p5.mouseY - p5.pmouseY;
+          line1mousetranslation = true;
+        } else if (line2mouse || line2mousetranslation) {
+          pointSecLine += p5.mouseY - p5.pmouseY;
+          line2mousetranslation = true;
+        } else if (!line1mousetranslation && !line2mousetranslation) {
+          // Update the values of tox and toy
+          tox += p5.mouseX - p5.pmouseX;
+          toy += p5.mouseY - p5.pmouseY;
+          topx += p5.mouseX - p5.pmouseX;
+          topy += p5.mouseY - p5.pmouseY;
 
-        pointLine += p5.mouseY - p5.pmouseY;
-        pointSecLine += p5.mouseY - p5.pmouseY;
+          pointLine += p5.mouseY - p5.pmouseY;
+          pointSecLine += p5.mouseY - p5.pmouseY;
 
-        //console.log("novas coordenadas centro", p5.mouseX, tox, toy);
-
-        // Set isDragging to true
-        isDragging = true;
+          // Set isDragging to true
+          isDragging = true;
+        }
       }
 
       /* console.log("translação", tox - x, toy - y); */
