@@ -1,10 +1,10 @@
 import "./App.css";
 //import "bootstrap/dist/css/bootstrap.min.css";
-import Header from "./layout/Header";
-import Footer from "./layout/Footer";
-import ImageArea from "./layout/ImageArea";
-import ZoomArea from "./layout/ZoomArea";
-import WorkArea from "./layout/WorkArea";
+import Header from "./layout/header/Header";
+import Footer from "./layout/footer/Footer";
+import ImageArea from "./layout/image-area/ImageArea";
+import ZoomArea from "./layout/zoom-area/ZoomArea";
+import WorkArea from "./layout/work-area/WorkArea";
 
 function App() {
   return (

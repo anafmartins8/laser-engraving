@@ -1,4 +1,4 @@
-import Logo from "./Logo";
+import Logo from "../../components/common/logo/Logo";
 
 function Header() {
   return (

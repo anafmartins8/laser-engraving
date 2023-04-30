@@ -1,6 +1,6 @@
-import Tabs from "./Tabs";
-import BottomSidewall from "./BottomSidewall";
-import Mark from "./Mark";
+import Tabs from "../../components/common/tabs/Tabs";
+import BottomSidewall from "./bottom-sidewall/BottomSidewall";
+import Mark from "./mark/Mark";
 
 function WorkArea() {
   return (
