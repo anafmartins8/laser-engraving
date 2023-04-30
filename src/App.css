@@ -2,6 +2,11 @@ html {
   background-color: #2C2C2C !important; 
 }
 
+/*Remove scroll bar*/
+::-webkit-scrollbar {
+  display: none;
+}
+
 .App {
   color: #E6E6E6;
   display: grid;
@@ -33,7 +38,7 @@ footer {
   padding-right: 75px;
 }
 
-img {
+img.logo {
   filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(252deg) brightness(140%) contrast(103%);
   height: 40px;
   margin-right: 15px;
@@ -614,3 +619,43 @@ table tbody svg:hover {
   cursor: pointer;
   color: #CCCCCC;
 }
+
+
+/* IMAGE 
+* {
+  padding: 0;
+  margin: 0;
+  outline: 0;
+  overflow: hidden;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#zoom {
+  width: 100%;
+  height: 100%;
+  transform-origin: 0px 0px;
+  transform: scale(1) translate(0px, 0px);
+  cursor: grab;
+}
+
+img {
+  width: auto;
+  height: auto;
+}
+
+.zoom_outer {
+height: 100%;
+}
+*/
+
+.react-p5-wrapper, .p5Canvas {
+  height: 100%;
+  width: 100%;
+}
+
