@@ -1,7 +1,7 @@
 import Tabs from "./Tabs";
 import Info from "./Info";
-import TeachingMarks from "./TeachingMarks";
 import TrainMark from "./TrainMark";
+import TeachingMarks from "./teaching-marks/TeachingMarks";
 
 function Mark() {
   return (

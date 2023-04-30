@@ -1,10 +1,15 @@
 //import { useState } from "react";
 import { ReactP5Wrapper } from "react-p5-wrapper";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addMark } from "../store/slices/marksSlice";
 
 function ImageArea() {
   //const [scale, setScale] = useState(1);
   const myDivRef = React.createRef();
+  const { canvasMode } = useSelector((state) => state.canvas);
+  const dispatch = useDispatch();
+
   const sketch = (p5) => {
     var img;
     let initialScale;
@@ -136,6 +141,8 @@ function ImageArea() {
       line1mousetranslation = false;
       line2mousetranslation = false;
 
+      if (isOutSideOfBounds() || isOutSideOfImage()) return;
+
       if (!isDragging) {
         /* sem translações - o ponto clidado está idemtificado */
         console.log("canvas coordenates", p5.mouseX, p5.mouseY);
@@ -171,6 +178,16 @@ function ImageArea() {
         );
 
         console.log("____________________________________________");
+
+        const clickedX = (p5.mouseX - (topx - px)) / (initialScale * zoomScale);
+        const clickedY = (p5.mouseY - (topy - py)) / (initialScale * zoomScale);
+
+        dispatch(
+          addMark({
+            x: clickedX,
+            y: clickedY,
+          })
+        );
       }
 
       if (isDragging) {
