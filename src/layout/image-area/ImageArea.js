@@ -2,7 +2,7 @@
 import { ReactP5Wrapper } from "react-p5-wrapper";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addMark } from "../store/slices/marksSlice";
+import { addMark } from "../../store/slices/marksSlice";
 
 function ImageArea() {
   //const [scale, setScale] = useState(1);

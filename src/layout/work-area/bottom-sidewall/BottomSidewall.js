@@ -1,8 +1,8 @@
-import Tabs from "./Tabs";
-import Switch from "./Switch";
+import Switch from "../../../components/common/switch/Switch";
 import { useState } from "react";
-import Info from "./Info";
-import TrainSidewall from "./TrainSidewall";
+import Info from "../../../components/common/info/Info";
+import TrainSidewall from "./train-sidewall/TrainSidewall";
+import Tabs from "../../../components/common/tabs/Tabs";
 
 function BottomSidewall() {
   const [isToogled, setIsToggled] = useState(false);

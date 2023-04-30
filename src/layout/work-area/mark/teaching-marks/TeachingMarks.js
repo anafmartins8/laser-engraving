@@ -1,9 +1,9 @@
 import React from "react";
 import { BsFillTrashFill } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
-import { CANVAS_MODES } from "../../consts/canvas.consts";
-import { switchCanvasMode } from "../../store/slices/canvasSlice";
-import { deleteMark } from "../../store/slices/marksSlice";
+import { CANVAS_MODES } from "../../../../consts/canvas.consts";
+import { switchCanvasMode } from "../../../../store/slices/canvasSlice";
+import { deleteMark } from "../../../../store/slices/marksSlice";
 import "./TeachingMarks.css";
 
 function TeachingMarks() {

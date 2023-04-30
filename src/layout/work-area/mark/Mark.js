@@ -1,6 +1,6 @@
-import Tabs from "./Tabs";
-import Info from "./Info";
-import TrainMark from "./TrainMark";
+import Tabs from "../../../components/common/tabs/Tabs";
+import Info from "../../../components/common/info/Info";
+import TrainMark from "./teaching-marks/TrainMark";
 import TeachingMarks from "./teaching-marks/TeachingMarks";
 
 function Mark() {
