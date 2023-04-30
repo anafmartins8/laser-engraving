@@ -46,9 +46,6 @@ function ImageArea() {
     };
 
     p5.setup = () => {
-      console.log(
-        "correeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-      );
       p5.createCanvas(wcontainer, hcontainer);
       console.log("tamanho da div container", wcontainer, hcontainer);
       initialScale = wcontainer / img.width;
@@ -82,6 +79,10 @@ function ImageArea() {
           pointRect = (tow + topx) / 2;
         }
         p5.rect(pointRect - 3, yline - 3, 6, 6);
+      }
+
+      ylimit(yline) {
+        return yline > topy - py + toh || yline < topy - py;
       }
 
       rect(yline) {
@@ -128,12 +129,14 @@ function ImageArea() {
     };
 
     p5.doubleClicked = () => {
-      if (drawLine) {
-        drawSecLine = true;
-        pointSecLine = p5.mouseY;
-      } else {
-        pointLine = p5.mouseY;
-        drawLine = true;
+      if (!isOutSideOfImage()) {
+        if (drawLine) {
+          drawSecLine = true;
+          pointSecLine = p5.mouseY;
+        } else {
+          pointLine = p5.mouseY;
+          drawLine = true;
+        }
       }
     };
 
@@ -203,12 +206,33 @@ function ImageArea() {
       //if (isOutSideOfImage()) return;
       console.log("LINE", line1mouse);
       if (p5.mouseIsPressed) {
-        if (line1mouse || line1mousetranslation) {
+        if ((line1mouse || line1mousetranslation) && !isOutSideOfImage()) {
           pointLine += p5.mouseY - p5.pmouseY;
           line1mousetranslation = true;
-        } else if (line2mouse || line2mousetranslation) {
+          if (line1.ylimit(pointLine)) {
+            //
+            if (pointLine < topy) {
+              //limite sup
+              pointLine = topy;
+            } else {
+              pointLine = topy + toh;
+            }
+          }
+        } else if (
+          (line2mouse || line2mousetranslation) &&
+          !isOutSideOfImage()
+        ) {
           pointSecLine += p5.mouseY - p5.pmouseY;
           line2mousetranslation = true;
+          if (line2.ylimit(pointSecLine)) {
+            //
+            if (pointSecLine < topy) {
+              //limite sup
+              pointSecLine = topy;
+            } else {
+              pointSecLine = topy + toh;
+            }
+          }
         } else if (!line1mousetranslation && !line2mousetranslation) {
           // Update the values of tox and toy
           tox += p5.mouseX - p5.pmouseX;
@@ -287,15 +311,15 @@ function ImageArea() {
     };
 
     const isOutSideOfImage = () => {
-      //console.log(topx, topy, px, py, tow, toh);
       // ponto na imagem inicial
       return (
-        p5.mouseX > topx - px + tow || // ter cuidado com w ->
+        p5.mouseX > topx - px + tow ||
         p5.mouseX < topx - px ||
         p5.mouseY > topy - py + toh ||
         p5.mouseY < topy - py
       );
     };
+
     /* translações em touchscreen
     p5.touchMoved = () => {
       // If there are two fingers on the screen, calculate the distance between them
