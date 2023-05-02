@@ -44,7 +44,7 @@ function ImageArea() {
 
     p5.preload = () => {
       p5.loadImage(
-        "http://localhost:3002/images/SW_img.jpeg",
+        "http://localhost:3000/images/SW_img.jpeg",
         (p1) => (img = p1),
         (e) => console.log("error", e),
         (is) => (initialScale = is)
@@ -218,13 +218,19 @@ function ImageArea() {
 
         console.log("____________________________________________");
 
-        const clickedX = (p5.mouseX - (topx - px)) / (initialScale * zoomScale);
-        const clickedY = (p5.mouseY - (topy - py)) / (initialScale * zoomScale);
+        const clickedX = (
+          (p5.mouseX - (topx - px)) /
+          (initialScale * zoomScale)
+        ).toFixed(1);
+        const clickedY = (
+          (p5.mouseY - (topy - py)) /
+          (initialScale * zoomScale)
+        ).toFixed(1);
 
         dispatch(
           addMark({
-            x: clickedX,
-            y: clickedY,
+            x: parseFloat(clickedX),
+            y: parseFloat(clickedY),
           })
         );
       }
