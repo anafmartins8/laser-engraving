@@ -17,9 +17,11 @@ function Mark() {
           </div>
         </div>
         <div label="Test OCR">
-          <div className="component-title">Recognized characters</div>
-          <div className="component-content">
-            ? 5 Z 25 Vaftem @ntinental ! P0lti Eamtg
+          <div className="bottom-component">
+            <div className="component-title">Recognized characters</div>
+            <div className="component-content">
+              ? 5 Z 25 Vaftem @ntinental ! P0lti Eamtg
+            </div>
           </div>
         </div>
       </Tabs>

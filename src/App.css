@@ -360,8 +360,7 @@ input:checked + .slider:before {
   border-radius: 50%;
   border: 0.5px solid #999999;
   font-size: 11px;
-  left: 30px;
-  top: 11.5px;
+ 
 }
 
 .component-content,

@@ -1,0 +1,9 @@
+.bottom-component {
+    align-self :end;
+}
+
+.icon-title {
+    z-index: 1;
+    top: 10.5px;
+    left: 30px;
+}
