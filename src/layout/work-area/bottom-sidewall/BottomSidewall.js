@@ -5,6 +5,7 @@ import Info from "../../../components/common/info/Info";
 import TrainSidewall from "./train-sidewall/TrainSidewall";
 import Tabs from "../../../components/common/tabs/Tabs";
 import "./BottomSidewall.css";
+import { TbArrowRightSquare } from "react-icons/tb";
 
 function BottomSidewall() {
   const [isToogled, setIsToggled] = useState(false);
@@ -26,7 +27,9 @@ function BottomSidewall() {
               <BsInfoLg />
             </div>
             <div className="component-content">
-              Select the region of interest in the image above
+              Select the region of interest in the image above. Use the{" "}
+              <TbArrowRightSquare /> button and draw boundary lines for the
+              region of interest.
             </div>
           </div>
         </div>

@@ -2,6 +2,7 @@ import Tabs from "../../../components/common/tabs/Tabs";
 import Info from "../../../components/common/info/Info";
 import TrainMark from "./teaching-marks/TrainMark";
 import TeachingMarks from "./teaching-marks/TeachingMarks";
+import { FaVectorSquare } from "react-icons/fa";
 
 function Mark() {
   return (
@@ -9,6 +10,11 @@ function Mark() {
       <Tabs>
         <div label="Teaching Marks">
           <TeachingMarks />
+          <div>
+            In the image above select the marks to teach. Use the button{" "}
+            <FaVectorSquare /> and draw a rectangle that encloses each mark, up
+            to 5 marks.
+          </div>
         </div>
         <div label="Train OCR">
           <div className="two-components">
