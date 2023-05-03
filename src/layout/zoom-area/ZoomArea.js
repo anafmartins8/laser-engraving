@@ -9,27 +9,27 @@ function ZoomArea() {
     <div className="zoom-container">
       <div>
         <button type="button" className="button-info">
-          <MdOutlineLoop />
+          <MdOutlineLoop title="Image reset" />
         </button>
       </div>
       <div>
         <button type="button" className="button-info">
-          <RiZoomInLine />
+          <RiZoomInLine title="Zoom in" />
         </button>
       </div>
       <div>
         <button type="button" className="button-info">
-          <RiZoomOutLine />
+          <RiZoomOutLine title="Zoom out" />
         </button>
       </div>
       <div>
         <button type="button" className="button-info">
-          <TbArrowRightSquare />
+          <TbArrowRightSquare title="Draw lines" />
         </button>
       </div>
       <div>
         <button type="button" className="button-info square-icon">
-          <FaVectorSquare />
+          <FaVectorSquare title="Draw rectangles" />
         </button>
       </div>
     </div>
