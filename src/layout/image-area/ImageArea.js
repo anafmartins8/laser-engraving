@@ -3,11 +3,17 @@ import { ReactP5Wrapper } from "react-p5-wrapper";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addMark } from "../../store/slices/marksSlice";
+import { addLine, editLine, setImg } from "../../store/slices/canvasSlice";
+import { DEFAULT_LINE } from "../../consts/line.consts";
+import { draw_line, draw_rect, fill_rect } from "../../utils/line.utils";
+import { CANVAS_MODES } from "../../consts/canvas.consts";
+
+const MAX_LINES = 2;
 
 function ImageArea() {
   //const [scale, setScale] = useState(1);
   const myDivRef = React.createRef();
-  const { canvasMode } = useSelector((state) => state.canvas);
+  const { canvasMode, lines, img } = useSelector((state) => state.canvas);
   const dispatch = useDispatch();
 
   const sketch = (p5) => {
@@ -61,52 +67,23 @@ function ImageArea() {
       y = toy = h / 2;
       px = topx = 0;
       py = topy = 0;
+      /* dispatch(
+        setImg({
+          ...img,
+          x: (tox = w / 2),
+          y: (toy = h / 2),
+          px: (topx = 0),
+          py: (topy = 0),
+        })
+      ); */
       console.log("tamanho real da imagem", img.width, img.height);
       console.log("escala inicial", initialScale);
       console.log("tamanho inicial da imagem", w, h);
       console.log("coordenadas iniciais do centro da imagem", x, y);
-      line1 = new Line();
-      line2 = new Line();
+      /* line1 = new Line();
+      line2 = new Line(); */
       rect = new Rect();
     };
-
-    class Line {
-      draw_line(x1, y1, x2, y2) {
-        p5.strokeWeight(1);
-        p5.stroke("#F58000");
-        p5.line(x1, y1, x2, y2);
-      }
-      draw_rect(yline) {
-        p5.fill(255);
-        if (topx <= 0 && topx + tow >= wcontainer) {
-          pointRect = wcontainer / 2;
-        } else if (topx > 0) {
-          pointRect = topx + (wcontainer - topx) / 2;
-        } else if (topx + tow < wcontainer) {
-          pointRect = (tow + topx) / 2;
-        }
-        p5.rect(pointRect - 3, yline - 3, 6, 6);
-      }
-
-      ylimit(yline) {
-        return yline > topy - py + toh || yline < topy - py;
-      }
-
-      rect(yline) {
-        return (
-          p5.pmouseX > pointRect - 10 &&
-          p5.pmouseX < pointRect + 10 &&
-          p5.pmouseY > yline - 10 &&
-          p5.pmouseY < yline + 10
-        );
-      }
-
-      fill_rect() {
-        p5.strokeWeight(0);
-        p5.fill(245, 128, 0, 30);
-        p5.rect(topx, pointLine, tow, pointSecLine - pointLine);
-      }
-    }
 
     class Rect {
       draw_rect(x, y, w, h) {
@@ -137,10 +114,27 @@ function ImageArea() {
       //tween/smooth motion
       w = p5.lerp(w, tow, 1);
       h = p5.lerp(h, toh, 1);
+      /* dispatch(
+        setImg({
+          ...img,
+          w: p5.lerp(w, tow, 1),
+          h: p5.lerp(h, toh, 1),
+        })
+      ); */
 
       // Display the image using the p5.image function
       p5.image(img, topx, topy, w, h);
-      if (drawLine) {
+
+      lines.forEach((line, i) => {
+        console.log("LINE LINE LINE", line);
+        draw_line(p5, line, topx, topx + tow);
+        draw_rect(p5, line, topx, tow, wcontainer);
+        if (i === MAX_LINES - 1) {
+          fill_rect(p5, line, topx, tow, lines[0].y);
+        }
+      });
+
+      /* if (drawLine) {
         line1.draw_line(topx, pointLine, topx + tow, pointLine);
         line1.draw_rect(pointLine);
         line1mouse = line1.rect(pointLine);
@@ -150,29 +144,54 @@ function ImageArea() {
         line2.draw_rect(pointSecLine);
         line2mouse = line2.rect(pointSecLine);
         line2.fill_rect();
-      }
+      } */
+
       if (drawRect) {
         rect.draw_rect(rectx, recty, rectw, recth);
         rect.rect_move();
         rectmouse = rect.recttranslate();
       }
+      console.log(
+        "RECT DIMENTIONS",
+        rectw / initialScale,
+        recth / initialScale
+      );
     };
 
     p5.doubleClicked = () => {
-      if (!isOutSideOfImage()) {
-        if (drawLine) {
-          if (!drawSecLine) {
-            pointSecLine = p5.mouseY;
-          }
-          drawSecLine = true;
-        } else {
-          pointLine = p5.mouseY;
-          drawLine = true;
-        }
+      if (isOutSideOfImage() || lines.length === MAX_LINES) {
+        return;
       }
+
+      dispatch(
+        addLine({
+          ...DEFAULT_LINE,
+          y: p5.mouseY,
+          pointLine: p5.mouseY,
+        })
+      );
+
+      /* if (drawLine) {
+        if (!drawSecLine) {
+          pointSecLine = p5.mouseY;
+        }
+        drawSecLine = true;
+      } else {
+        pointLine = p5.mouseY;
+        drawLine = true;
+      } */
     };
 
     p5.mouseReleased = () => {
+      lines.forEach((line, i) => {
+        dispatch(
+          editLine({
+            index: i,
+            line: { ...line, inTranslation: false },
+          })
+        );
+        //line.setInTranslation(false);
+      });
       line1mousetranslation = false;
       line2mousetranslation = false;
 
@@ -218,19 +237,25 @@ function ImageArea() {
 
         console.log("____________________________________________");
 
-        const clickedX = (
+        /*const clickedX = (
           (p5.mouseX - (topx - px)) /
           (initialScale * zoomScale)
         ).toFixed(1);
         const clickedY = (
           (p5.mouseY - (topy - py)) /
           (initialScale * zoomScale)
-        ).toFixed(1);
+        ).toFixed(1);*/
+        const clickedX = (rectx / (initialScale * zoomScale)).toFixed(1);
+        const clickedY = (recty / (initialScale * zoomScale)).toFixed(1);
+        const windowW = (rectw / (initialScale * zoomScale)).toFixed(1);
+        const windowH = (recth / (initialScale * zoomScale)).toFixed(1);
 
         dispatch(
           addMark({
             x: parseFloat(clickedX),
             y: parseFloat(clickedY),
+            w: parseFloat(windowW),
+            h: parseFloat(windowH),
           })
         );
       }
@@ -246,8 +271,8 @@ function ImageArea() {
     p5.mouseDragged = () => {
       if (isOutSideOfBounds()) return;
       //if (isOutSideOfImage()) return;
-      console.log("LINE", line1mouse);
-      if (canvasMode === 1 && !drawRectDisable) {
+      //console.log("LINE", line1mouse);
+      if (canvasMode === CANVAS_MODES.markMode && !drawRectDisable) {
         // modo rect
         if (p5.mouseIsPressed) {
           if (!drawRect) {
@@ -259,16 +284,28 @@ function ImageArea() {
           recth += p5.mouseY - p5.pmouseY;
           console.log(rectx, recty, rectw, recth, drawRect);
         }
-      } else if (canvasMode === 1 && drawRectDisable) {
+      } else if (canvasMode === CANVAS_MODES.markMode && drawRectDisable) {
         if (rectmouse) {
           rectx += p5.mouseX - p5.pmouseX;
           recty += p5.mouseY - p5.pmouseY;
         }
-      } else if (canvasMode === 0) {
-        //modo drag
+      } else if (canvasMode === CANVAS_MODES.dragMode) {
         if (p5.mouseIsPressed) {
           if ((line1mouse || line1mousetranslation) && !isOutSideOfImage()) {
-            pointLine += p5.mouseY - p5.pmouseY;
+            //pointLine += p5.mouseY - p5.pmouseY;
+            lines.forEach((line, i) => {
+              dispatch(
+                editLine({
+                  index: i,
+                  line: {
+                    ...line,
+                    inTranslation: true,
+                    pointLine: line.pointLine + p5.mouseY - p5.pmouseY,
+                  },
+                })
+              );
+              //line.setInTranslation(true);
+            });
             line1mousetranslation = true;
             if (line1.ylimit(pointLine)) {
               //
@@ -295,17 +332,7 @@ function ImageArea() {
               }
             }
           } else if (!line1mousetranslation && !line2mousetranslation) {
-            // Update the values of tox and toy
-            tox += p5.mouseX - p5.pmouseX;
-            toy += p5.mouseY - p5.pmouseY;
-            topx += p5.mouseX - p5.pmouseX;
-            topy += p5.mouseY - p5.pmouseY;
-
-            pointLine += p5.mouseY - p5.pmouseY;
-            pointSecLine += p5.mouseY - p5.pmouseY;
-
-            // Set isDragging to true
-            isDragging = true;
+            onMoveImage();
           }
         }
       }
@@ -335,15 +362,6 @@ function ImageArea() {
           zoomScale = tow / wi;
           //console.log("Zoom Scale:", topx, topy, toh, tow, zoomScale);
         }
-
-        /*
-        for (var i = 0; i < e; i++) {
-          if (tow > 10 * myDivRef.current.offsetWidth) return; //max zoom
-          tox -= zoom * (p5.mouseX - tox);
-          toy -= zoom * (p5.mouseY - toy);
-          tow *= zoom + 1;
-          toh *= zoom + 1;
-        }*/
       }
 
       if (e < 0) {
@@ -389,6 +407,32 @@ function ImageArea() {
         p5.mouseY > topy - py + toh ||
         p5.mouseY < topy - py
       );
+    };
+
+    const onMoveImage = () => {
+      // Update the values of tox and toy
+      offsetY += p5.mouseY - p5.pmouseY;
+      tox += p5.mouseX - p5.pmouseX;
+      toy += p5.mouseY - p5.pmouseY;
+      topx += p5.mouseX - p5.pmouseX;
+      topy += p5.mouseY - p5.pmouseY;
+
+      lines.forEach((line, i) => {
+        dispatch(
+          editLine({
+            index: i,
+            line: {
+              ...line,
+              pointLine: line.pointLine + p5.mouseY - p5.pmouseY,
+            },
+          })
+        );
+      });
+      pointLine += p5.mouseY - p5.pmouseY;
+      pointSecLine += p5.mouseY - p5.pmouseY;
+
+      // Set isDragging to true
+      isDragging = true;
     };
 
     /* translações em touchscreen
