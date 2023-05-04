@@ -15,9 +15,6 @@ function ImageArea() {
     let initialScale;
     let zoomScale = 1.0;
     var wi, hi, w, h, tow, toh;
-    var x, y;
-    let tox = 0;
-    let toy = 0;
     var px, py;
     let topx = 0.0;
     let topy = 0.0;
@@ -57,14 +54,11 @@ function ImageArea() {
       initialScale = wcontainer / img.width;
       wi = w = tow = img.width * initialScale; //atualizar o tamanho da imagem logo no inicio
       hi = h = toh = img.height * initialScale;
-      x = tox = w / 2;
-      y = toy = h / 2;
       px = topx = 0;
       py = topy = 0;
       console.log("tamanho real da imagem", img.width, img.height);
       console.log("escala inicial", initialScale);
       console.log("tamanho inicial da imagem", w, h);
-      console.log("coordenadas iniciais do centro da imagem", x, y);
       line1 = new Line();
       line2 = new Line();
       rect = new Rect();
@@ -192,7 +186,6 @@ function ImageArea() {
         );
 
         /* Translações */
-        console.log("translação a partir de centro", tox - x, toy - y); //centro final menos centro inicial - ok
         console.log(
           "translaçao a partir de ponto inicial",
           topx - px,
@@ -200,7 +193,6 @@ function ImageArea() {
         ); // canto sup esq final menos canto sup esq inicial
 
         /* Saber o ponto clicado depois de translação */
-        /* com ponto inicial*/
         console.log("zoomscale2", zoomScale);
         console.log(
           "ponto na imagem inicial - ou seja ponto inicial na translação inversa",
@@ -293,9 +285,7 @@ function ImageArea() {
               }
             }
           } else if (!line1mousetranslation && !line2mousetranslation) {
-            // Update the values of tox and toy
-            tox += p5.mouseX - p5.pmouseX;
-            toy += p5.mouseY - p5.pmouseY;
+            // Update the values
             topx += p5.mouseX - p5.pmouseX;
             topy += p5.mouseY - p5.pmouseY;
 
@@ -307,8 +297,6 @@ function ImageArea() {
           }
         }
       }
-
-      /* console.log("translação", tox - x, toy - y); */
     };
 
     p5.mouseWheel = (event) => {
@@ -333,15 +321,6 @@ function ImageArea() {
           zoomScale = tow / wi;
           //console.log("Zoom Scale:", topx, topy, toh, tow, zoomScale);
         }
-
-        /*
-        for (var i = 0; i < e; i++) {
-          if (tow > 10 * myDivRef.current.offsetWidth) return; //max zoom
-          tox -= zoom * (p5.mouseX - tox);
-          toy -= zoom * (p5.mouseY - toy);
-          tow *= zoom + 1;
-          toh *= zoom + 1;
-        }*/
       }
 
       if (e < 0) {
@@ -380,7 +359,6 @@ function ImageArea() {
     };
 
     const isOutSideOfImage = () => {
-      // ponto na imagem inicial
       return (
         p5.mouseX > topx - px + tow ||
         p5.mouseX < topx - px ||
