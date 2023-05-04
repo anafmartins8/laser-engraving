@@ -14,7 +14,7 @@ function ImageArea() {
     var img;
     let initialScale;
     let zoomScale = 1.0;
-    var wi, hi, w, h, tow, toh;
+    var wi, w, h, tow, toh;
     var px, py;
     let topx = 0.0;
     let topy = 0.0;
@@ -26,7 +26,6 @@ function ImageArea() {
     let drawSecLine = false;
     let pointLine = 0.0;
     let pointSecLine = 0.0;
-    let rectLine = 0;
     let pointRect = 0.0;
     let line1, line2, rect;
     let line1mouse, line2mouse, line1mousetranslation, line2mousetranslation;
@@ -53,7 +52,7 @@ function ImageArea() {
       console.log("tamanho da div container", wcontainer, hcontainer);
       initialScale = wcontainer / img.width;
       wi = w = tow = img.width * initialScale; //atualizar o tamanho da imagem logo no inicio
-      hi = h = toh = img.height * initialScale;
+      h = toh = img.height * initialScale;
       px = topx = 0;
       py = topy = 0;
       console.log("tamanho real da imagem", img.width, img.height);
