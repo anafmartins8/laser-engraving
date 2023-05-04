@@ -366,25 +366,6 @@ function ImageArea() {
         p5.mouseY < topy - py
       );
     };
-
-    /* translações em touchscreen
-    p5.touchMoved = () => {
-      // If there are two fingers on the screen, calculate the distance between them
-      if (p5.touches.length === 2) {
-        const distance = p5.dist(
-          p5.touches[0].x,
-          p5.touches[0].y,
-          p5.touches[1].x,
-          p5.touches[1].y
-        );
-
-        // Use the distance to adjust the scale factor
-        p5.scaleFactor = p5.map(distance, 0, p5.width, 0.5, 2.0);
-      }
-
-      // Prevent the default touch behavior
-      return false;
-    };*/
   };
 
   return (
