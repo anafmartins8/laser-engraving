@@ -261,7 +261,6 @@ function ImageArea() {
             pointLine += p5.mouseY - p5.pmouseY;
             line1mousetranslation = true;
             if (line1.ylimit(pointLine)) {
-              //
               if (pointLine < topy) {
                 //limite sup
                 pointLine = topy;
@@ -341,14 +340,8 @@ function ImageArea() {
           //console.log("Zoom Scale:", topx, topy, toh, tow, zoomScale);
         }
       }
-
-      /*
-      // Change the scale of the image based on the mouse scroll wheel delta
-      setScale(scale + event.delta / 1000);
-      console.log("scale", scale);
-      // Prevent the page from scrolling when the mouse is over the canvas
-      return false;*/
     };
+
     const isOutSideOfBounds = () => {
       return (
         p5.mouseX > wcontainer ||
