@@ -218,19 +218,17 @@ function ImageArea() {
 
         console.log("____________________________________________");
 
-        const clickedX = (
-          (p5.mouseX - (topx - px)) /
-          (initialScale * zoomScale)
-        ).toFixed(1);
-        const clickedY = (
-          (p5.mouseY - (topy - py)) /
-          (initialScale * zoomScale)
-        ).toFixed(1);
+        const clickedX = (rectx / (initialScale * zoomScale)).toFixed(1);
+        const clickedY = (recty / (initialScale * zoomScale)).toFixed(1);
+        const windowW = (rectw / (initialScale * zoomScale)).toFixed(1);
+        const windowH = (recth / (initialScale * zoomScale)).toFixed(1);
 
         dispatch(
           addMark({
             x: parseFloat(clickedX),
             y: parseFloat(clickedY),
+            w: parseFloat(windowW),
+            h: parseFloat(windowH),
           })
         );
       }

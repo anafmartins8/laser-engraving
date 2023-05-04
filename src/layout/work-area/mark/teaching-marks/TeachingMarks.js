@@ -51,9 +51,9 @@ function TeachingMarks() {
             </thead>
             <tbody>
               {marks.map((mark, index) => (
-                <tr>
+                <tr key={index}>
                   <td className="centered">{index + 1}</td>
-                  <td className="centered">(wX, wY)</td>
+                  <td className="centered">{`(${mark.w}, ${mark.h})`}</td>
                   <td className="centered">{`(${mark.x}, ${mark.y})`}</td>
                   <td className="centered">
                     {" "}
