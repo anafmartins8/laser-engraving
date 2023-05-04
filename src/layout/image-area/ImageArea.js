@@ -15,9 +15,9 @@ function ImageArea() {
     let initialScale;
     let zoomScale = 1.0;
     var wi, w, h, tow, toh;
-    var px, py;
-    let topx = 0.0;
-    let topy = 0.0;
+    var x, y;
+    let tox = 0.0;
+    let toy = 0.0;
     let isDragging = false;
     var zoom = 0.01; //zoom step per mouse tick
     let wcontainer = myDivRef.current.offsetWidth - 4; //div size (2px + 2px blue borders)
@@ -53,8 +53,8 @@ function ImageArea() {
       initialScale = wcontainer / img.width;
       wi = w = tow = img.width * initialScale; //atualizar o tamanho da imagem logo no inicio
       h = toh = img.height * initialScale;
-      px = topx = 0;
-      py = topy = 0;
+      x = tox = 0;
+      y = toy = 0;
       console.log("tamanho real da imagem", img.width, img.height);
       console.log("escala inicial", initialScale);
       console.log("tamanho inicial da imagem", w, h);
@@ -71,18 +71,18 @@ function ImageArea() {
       }
       draw_rect(yline) {
         p5.fill(255);
-        if (topx <= 0 && topx + tow >= wcontainer) {
+        if (tox <= 0 && tox + tow >= wcontainer) {
           pointRect = wcontainer / 2;
-        } else if (topx > 0) {
-          pointRect = topx + (wcontainer - topx) / 2;
-        } else if (topx + tow < wcontainer) {
-          pointRect = (tow + topx) / 2;
+        } else if (tox > 0) {
+          pointRect = tox + (wcontainer - tox) / 2;
+        } else if (tox + tow < wcontainer) {
+          pointRect = (tow + tox) / 2;
         }
         p5.rect(pointRect - 3, yline - 3, 6, 6);
       }
 
       ylimit(yline) {
-        return yline > topy - py + toh || yline < topy - py;
+        return yline > toy - y + toh || yline < toy - y;
       }
 
       rect(yline) {
@@ -97,7 +97,7 @@ function ImageArea() {
       fill_rect() {
         p5.strokeWeight(0);
         p5.fill(245, 128, 0, 30);
-        p5.rect(topx, pointLine, tow, pointSecLine - pointLine);
+        p5.rect(tox, pointLine, tow, pointSecLine - pointLine);
       }
     }
 
@@ -132,14 +132,14 @@ function ImageArea() {
       h = p5.lerp(h, toh, 1);
 
       // Display the image using the p5.image function
-      p5.image(img, topx, topy, w, h);
+      p5.image(img, tox, toy, w, h);
       if (drawLine) {
-        line1.draw_line(topx, pointLine, topx + tow, pointLine);
+        line1.draw_line(tox, pointLine, tox + tow, pointLine);
         line1.draw_rect(pointLine);
         line1mouse = line1.rect(pointLine);
       }
       if (drawSecLine) {
-        line2.draw_line(topx, pointSecLine, topx + tow, pointSecLine);
+        line2.draw_line(tox, pointSecLine, tox + tow, pointSecLine);
         line2.draw_rect(pointSecLine);
         line2mouse = line2.rect(pointSecLine);
         line2.fill_rect();
@@ -185,26 +185,22 @@ function ImageArea() {
         );
 
         /* Translações */
-        console.log(
-          "translaçao a partir de ponto inicial",
-          topx - px,
-          topy - py
-        ); // canto sup esq final menos canto sup esq inicial
+        console.log("translaçao a partir de ponto inicial", tox - x, toy - y); // canto sup esq final menos canto sup esq inicial
 
         /* Saber o ponto clicado depois de translação */
         console.log("zoomscale2", zoomScale);
         console.log(
           "ponto na imagem inicial - ou seja ponto inicial na translação inversa",
-          (p5.mouseX - (topx - px)) / zoomScale,
-          (p5.mouseY - (topy - py)) / zoomScale
+          (p5.mouseX - (tox - x)) / zoomScale,
+          (p5.mouseY - (toy - y)) / zoomScale
         );
 
-        console.log(p5.mouseX, topx, px, zoomScale);
+        console.log(p5.mouseX, tox, x, zoomScale);
 
         console.log(
           "ponto na imagem real",
-          (p5.mouseX - (topx - px)) / (initialScale * zoomScale),
-          (p5.mouseY - (topy - py)) / (initialScale * zoomScale)
+          (p5.mouseX - (tox - x)) / (initialScale * zoomScale),
+          (p5.mouseY - (toy - y)) / (initialScale * zoomScale)
         );
 
         console.log("____________________________________________");
@@ -260,11 +256,11 @@ function ImageArea() {
             pointLine += p5.mouseY - p5.pmouseY;
             line1mousetranslation = true;
             if (line1.ylimit(pointLine)) {
-              if (pointLine < topy) {
+              if (pointLine < toy) {
                 //limite sup
-                pointLine = topy;
+                pointLine = toy;
               } else {
-                pointLine = topy + toh;
+                pointLine = toy + toh;
               }
             }
           } else if (
@@ -275,17 +271,17 @@ function ImageArea() {
             line2mousetranslation = true;
             if (line2.ylimit(pointSecLine)) {
               //
-              if (pointSecLine < topy) {
+              if (pointSecLine < toy) {
                 //limite sup
-                pointSecLine = topy;
+                pointSecLine = toy;
               } else {
-                pointSecLine = topy + toh;
+                pointSecLine = toy + toh;
               }
             }
           } else if (!line1mousetranslation && !line2mousetranslation) {
             // Update the values
-            topx += p5.mouseX - p5.pmouseX;
-            topy += p5.mouseY - p5.pmouseY;
+            tox += p5.mouseX - p5.pmouseX;
+            toy += p5.mouseY - p5.pmouseY;
 
             pointLine += p5.mouseY - p5.pmouseY;
             pointSecLine += p5.mouseY - p5.pmouseY;
@@ -305,8 +301,8 @@ function ImageArea() {
         //zoom in
         for (var i = 0; i < e; i++) {
           if (tow * (zoom + 1) > 3 * wi) return; //max zoom
-          topx -= zoom * (p5.mouseX - topx);
-          topy -= zoom * (p5.mouseY - topy);
+          tox -= zoom * (p5.mouseX - tox);
+          toy -= zoom * (p5.mouseY - toy);
           tow *= zoom + 1;
           toh *= zoom + 1;
           pointLine -= zoom * (p5.mouseY - pointLine);
@@ -317,7 +313,7 @@ function ImageArea() {
           recth *= zoom + 1;
 
           zoomScale = tow / wi;
-          //console.log("Zoom Scale:", topx, topy, toh, tow, zoomScale);
+          //console.log("Zoom Scale:", tox, toy, toh, tow, zoomScale);
         }
       }
 
@@ -325,8 +321,8 @@ function ImageArea() {
         //zoom out
         for (var j = 0; j < -e; j++) {
           if (tow / (zoom + 1) < wi) return; //min zoom
-          topx += (zoom / (zoom + 1)) * (p5.mouseX - topx);
-          topy += (zoom / (zoom + 1)) * (p5.mouseY - topy);
+          tox += (zoom / (zoom + 1)) * (p5.mouseX - tox);
+          toy += (zoom / (zoom + 1)) * (p5.mouseY - toy);
           toh /= zoom + 1;
           tow /= zoom + 1;
           pointLine += (zoom / (zoom + 1)) * (p5.mouseY - pointLine);
@@ -336,7 +332,7 @@ function ImageArea() {
           rectw /= zoom + 1;
           recth /= zoom + 1;
           zoomScale = tow / wi;
-          //console.log("Zoom Scale:", topx, topy, toh, tow, zoomScale);
+          //console.log("Zoom Scale:", tox, toy, toh, tow, zoomScale);
         }
       }
     };
@@ -352,10 +348,10 @@ function ImageArea() {
 
     const isOutSideOfImage = () => {
       return (
-        p5.mouseX > topx - px + tow ||
-        p5.mouseX < topx - px ||
-        p5.mouseY > topy - py + toh ||
-        p5.mouseY < topy - py
+        p5.mouseX > tox - x + tow ||
+        p5.mouseX < tox - x ||
+        p5.mouseY > toy - y + toh ||
+        p5.mouseY < toy - y
       );
     };
   };
