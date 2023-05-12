@@ -1,44 +1,19 @@
 import React from "react";
 import { BsFillTrashFill } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
-import { CANVAS_MODES } from "../../../../consts/canvas.consts";
-import { switchCanvasMode } from "../../../../store/slices/canvasSlice";
 import { deleteMark } from "../../../../store/slices/marksSlice";
-import "./TeachingMarks.css";
 
 function TeachingMarks() {
   const { marks } = useSelector((state) => state.marks);
-  const { canvasMode } = useSelector((state) => state.canvas);
   const dispatch = useDispatch();
 
   const onDeleteMark = (markId) => {
     dispatch(deleteMark(markId));
   };
 
-  const onAddMarkClick = () => {
-    const newCanvasMode =
-      canvasMode === CANVAS_MODES.markMode
-        ? CANVAS_MODES.dragMode
-        : CANVAS_MODES.markMode;
-    dispatch(switchCanvasMode(newCanvasMode));
-  };
-
-  const isAddingMark = canvasMode === CANVAS_MODES.markMode;
-
   return (
     <React.Fragment>
       <div className="teaching-marks-container">
-        <div className="left-component">
-          <button
-            title="Add Mark"
-            className={`add-mark-button${
-              isAddingMark ? " add-mark-button-selected" : ""
-            }`}
-            onClick={onAddMarkClick}
-          >
-            {isAddingMark ? "Adding Mark" : "Add Mark"}
-          </button>
-        </div>
         <div className="right-component">
           <table>
             <thead>

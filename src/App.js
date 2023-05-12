@@ -3,7 +3,7 @@ import "./App.css";
 import Header from "./layout/header/Header";
 import Footer from "./layout/footer/Footer";
 import ImageArea from "./layout/image-area/ImageArea";
-import ZoomArea from "./layout/zoom-area/ZoomArea";
+import ManipulationArea from "./layout/manipulation-area/ManipulationArea";
 import WorkArea from "./layout/work-area/WorkArea";
 
 function App() {
@@ -12,7 +12,7 @@ function App() {
       <Header />
       <main>
         <ImageArea />
-        <ZoomArea />
+        <ManipulationArea />
         <WorkArea />
       </main>
       <Footer />

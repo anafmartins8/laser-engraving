@@ -1,0 +1,19 @@
+.button-info {
+  border: 1px solid #2fa5dc;
+  color: #2fa5dc;
+  background-color: #2c2c2c;
+}
+  
+.button-info:hover, .button-info-selected, .button-info-selected:hover{
+  background-color: #2fa5dc;
+  color: #ffffff;
+}
+  
+.button-info svg {
+  font-size: 1.6em;
+  vertical-align: middle;
+}
+
+.square-icon {
+  font-size: 11px;
+}
