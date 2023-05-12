@@ -3,6 +3,7 @@ import { ReactP5Wrapper } from "react-p5-wrapper";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addMark } from "../../store/slices/marksSlice";
+import { CANVAS_MODES } from "../../consts/canvas.consts";
 
 function ImageArea() {
   //const [scale, setScale] = useState(1);
@@ -36,8 +37,6 @@ function ImageArea() {
     let drawRectDisable = false;
     let rectmouse = false;
 
-    //lines
-
     p5.preload = () => {
       p5.loadImage(
         "http://localhost:3000/images/SW_img.jpeg",
@@ -64,12 +63,15 @@ function ImageArea() {
     };
 
     class Line {
-      draw_line(x1, y1, x2, y2) {
+      //Draw line
+      drawLine(x1, y1, x2, y2) {
         p5.strokeWeight(1);
         p5.stroke("#F58000");
         p5.line(x1, y1, x2, y2);
       }
-      draw_rect(yline) {
+
+      //Draw translation point on line (6x6)
+      drawTranslationPoint(yline) {
         p5.fill(255);
         if (tox <= 0 && tox + tow >= wcontainer) {
           pointRect = wcontainer / 2;
@@ -81,11 +83,13 @@ function ImageArea() {
         p5.rect(pointRect - 3, yline - 3, 6, 6);
       }
 
-      ylimit(yline) {
+      //Control image limit for translations
+      setLimit(yline) {
         return yline > toy - y + toh || yline < toy - y;
       }
 
-      rect(yline) {
+      //Make margin for the point of translation
+      addMarginToPoint(yline) {
         return (
           p5.pmouseX > pointRect - 10 &&
           p5.pmouseX < pointRect + 10 &&
@@ -94,7 +98,8 @@ function ImageArea() {
         );
       }
 
-      fill_rect() {
+      //Fill space between drawn lines - ROI
+      fillROI() {
         p5.strokeWeight(0);
         p5.fill(245, 128, 0, 30);
         p5.rect(tox, pointLine, tow, pointSecLine - pointLine);
@@ -102,19 +107,22 @@ function ImageArea() {
     }
 
     class Rect {
-      draw_rect(x, y, w, h) {
+      //Draw Rectangle
+      drawRect(x, y, w, h) {
         p5.strokeWeight(1);
         p5.stroke("#F58000");
         p5.fill(245, 128, 0, 30);
         p5.rect(x, y, w, h);
       }
 
-      rect_move() {
+      //Draw translation point on rectangle (6x6) - the center
+      drawTranslationPoint() {
         p5.fill(255);
         p5.rect(rectx + rectw / 2 - 3, recty + recth / 2 - 3, 6, 6);
       }
 
-      recttranslate() {
+      //Make margin for the point of translation
+      addMarginToPoint() {
         return (
           p5.pmouseX > rectx + rectw / 2 - 10 &&
           p5.pmouseX < rectx + rectw / 2 + 10 &&
@@ -134,20 +142,20 @@ function ImageArea() {
       // Display the image using the p5.image function
       p5.image(img, tox, toy, w, h);
       if (drawLine) {
-        line1.draw_line(tox, pointLine, tox + tow, pointLine);
-        line1.draw_rect(pointLine);
-        line1mouse = line1.rect(pointLine);
+        line1.drawLine(tox, pointLine, tox + tow, pointLine);
+        line1.drawTranslationPoint(pointLine);
+        line1mouse = line1.addMarginToPoint(pointLine);
       }
       if (drawSecLine) {
-        line2.draw_line(tox, pointSecLine, tox + tow, pointSecLine);
-        line2.draw_rect(pointSecLine);
-        line2mouse = line2.rect(pointSecLine);
-        line2.fill_rect();
+        line2.drawLine(tox, pointSecLine, tox + tow, pointSecLine);
+        line2.drawTranslationPoint(pointSecLine);
+        line2mouse = line2.addMarginToPoint(pointSecLine);
+        line2.fillROI();
       }
       if (drawRect) {
-        rect.draw_rect(rectx, recty, rectw, recth);
-        rect.rect_move();
-        rectmouse = rect.recttranslate();
+        rect.drawRect(rectx, recty, rectw, recth);
+        rect.drawTranslationPoint();
+        rectmouse = rect.addMarginToPoint();
       }
     };
 
@@ -232,7 +240,7 @@ function ImageArea() {
       if (isOutSideOfBounds()) return;
       //if (isOutSideOfImage()) return;
       console.log("LINE", line1mouse);
-      if (canvasMode === 1 && !drawRectDisable) {
+      if (canvasMode === CANVAS_MODES.markMode && !drawRectDisable) {
         // modo rect
         if (p5.mouseIsPressed) {
           if (!drawRect) {
@@ -244,18 +252,18 @@ function ImageArea() {
           recth += p5.mouseY - p5.pmouseY;
           console.log(rectx, recty, rectw, recth, drawRect);
         }
-      } else if (canvasMode === 1 && drawRectDisable) {
+      } else if (canvasMode === CANVAS_MODES.markMode && drawRectDisable) {
         if (rectmouse) {
           rectx += p5.mouseX - p5.pmouseX;
           recty += p5.mouseY - p5.pmouseY;
         }
-      } else if (canvasMode === 0) {
+      } else if (canvasMode === CANVAS_MODES.dragMode) {
         //modo drag
         if (p5.mouseIsPressed) {
           if ((line1mouse || line1mousetranslation) && !isOutSideOfImage()) {
             pointLine += p5.mouseY - p5.pmouseY;
             line1mousetranslation = true;
-            if (line1.ylimit(pointLine)) {
+            if (line1.setLimit(pointLine)) {
               if (pointLine < toy) {
                 //limite sup
                 pointLine = toy;
@@ -269,7 +277,7 @@ function ImageArea() {
           ) {
             pointSecLine += p5.mouseY - p5.pmouseY;
             line2mousetranslation = true;
-            if (line2.ylimit(pointSecLine)) {
+            if (line2.setLimit(pointSecLine)) {
               //
               if (pointSecLine < toy) {
                 //limite sup
