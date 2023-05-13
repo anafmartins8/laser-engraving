@@ -16,9 +16,9 @@ function ImageArea() {
     let initialScale;
     let zoomScale = 1.0;
     var wi, w, h, tow, toh;
-    var x, y;
-    let tox = 0.0;
-    let toy = 0.0;
+    var x, y; //x and y initial coordinates
+    let tox = 0.0; //x coordinate of the starting point of the image
+    let toy = 0.0; //y coordinate of the starting point of the image
     let isDragging = false;
     var zoom = 0.01; //zoom step per mouse tick
     let wcontainer = myDivRef.current.offsetWidth - 4; //div size (2px + 2px blue borders)
@@ -48,12 +48,12 @@ function ImageArea() {
 
     p5.setup = () => {
       p5.createCanvas(wcontainer, hcontainer);
-      console.log("tamanho da div container", wcontainer, hcontainer);
       initialScale = wcontainer / img.width;
       wi = w = tow = img.width * initialScale; //atualizar o tamanho da imagem logo no inicio
       h = toh = img.height * initialScale;
       x = tox = 0;
       y = toy = 0;
+      console.log("tamanho da div container", wcontainer, hcontainer);
       console.log("tamanho real da imagem", img.width, img.height);
       console.log("escala inicial", initialScale);
       console.log("tamanho inicial da imagem", w, h);
@@ -184,39 +184,10 @@ function ImageArea() {
       if (isOutSideOfBounds() || isOutSideOfImage()) return;
 
       if (!isDragging) {
-        /* sem translações - o ponto clidado está idemtificado */
-        console.log("canvas coordenates", p5.mouseX, p5.mouseY);
-        console.log(
-          "image coordenates",
-          p5.mouseX / initialScale,
-          p5.mouseY / initialScale
-        );
-
-        /* Translações */
-        console.log("translaçao a partir de ponto inicial", tox - x, toy - y); // canto sup esq final menos canto sup esq inicial
-
-        /* Saber o ponto clicado depois de translação */
-        console.log("zoomscale2", zoomScale);
-        console.log(
-          "ponto na imagem inicial - ou seja ponto inicial na translação inversa",
-          (p5.mouseX - (tox - x)) / zoomScale,
-          (p5.mouseY - (toy - y)) / zoomScale
-        );
-
-        console.log(p5.mouseX, tox, x, zoomScale);
-
-        console.log(
-          "ponto na imagem real",
-          (p5.mouseX - (tox - x)) / (initialScale * zoomScale),
-          (p5.mouseY - (toy - y)) / (initialScale * zoomScale)
-        );
-
-        console.log("____________________________________________");
-
-        const clickedX = (rectx / (initialScale * zoomScale)).toFixed(1);
-        const clickedY = (recty / (initialScale * zoomScale)).toFixed(1);
-        const windowW = (rectw / (initialScale * zoomScale)).toFixed(1);
-        const windowH = (recth / (initialScale * zoomScale)).toFixed(1);
+        const clickedX = convertToRealScale(rectx);
+        const clickedY = convertToRealScale(recty);
+        const windowW = convertToRealScale(rectw);
+        const windowH = convertToRealScale(recth);
 
         dispatch(
           addMark({
@@ -239,7 +210,6 @@ function ImageArea() {
     p5.mouseDragged = () => {
       if (isOutSideOfBounds()) return;
       //if (isOutSideOfImage()) return;
-      console.log("LINE", line1mouse);
       if (canvasMode === CANVAS_MODES.markMode && !drawRectDisable) {
         // modo rect
         if (p5.mouseIsPressed) {
@@ -250,7 +220,6 @@ function ImageArea() {
           drawRect = true;
           rectw += p5.mouseX - p5.pmouseX;
           recth += p5.mouseY - p5.pmouseY;
-          console.log(rectx, recty, rectw, recth, drawRect);
         }
       } else if (canvasMode === CANVAS_MODES.markMode && drawRectDisable) {
         if (rectmouse) {
@@ -321,7 +290,6 @@ function ImageArea() {
           recth *= zoom + 1;
 
           zoomScale = tow / wi;
-          //console.log("Zoom Scale:", tox, toy, toh, tow, zoomScale);
         }
       }
 
@@ -340,7 +308,6 @@ function ImageArea() {
           rectw /= zoom + 1;
           recth /= zoom + 1;
           zoomScale = tow / wi;
-          //console.log("Zoom Scale:", tox, toy, toh, tow, zoomScale);
         }
       }
     };
@@ -361,6 +328,10 @@ function ImageArea() {
         p5.mouseY > toy - y + toh ||
         p5.mouseY < toy - y
       );
+    };
+
+    const convertToRealScale = (number) => {
+      return (number / (initialScale * zoomScale)).toFixed(1);
     };
   };
 

@@ -14,31 +14,29 @@ function TeachingMarks() {
   return (
     <React.Fragment>
       <div className="teaching-marks-container">
-        <div className="right-component">
-          <table>
-            <thead>
-              <tr>
-                <th className="centered">Point Number</th>
-                <th className="centered">Window</th>
-                <th className="centered">Mark Point</th>
-                <th className="centered"></th>
+        <table>
+          <thead>
+            <tr>
+              <th className="centered">Point Number</th>
+              <th className="centered">Window</th>
+              <th className="centered">Mark Point</th>
+              <th className="centered"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {marks.map((mark, index) => (
+              <tr key={index}>
+                <td className="centered">{index + 1}</td>
+                <td className="centered">{`(${mark.w}, ${mark.h})`}</td>
+                <td className="centered">{`(${mark.x}, ${mark.y})`}</td>
+                <td className="centered">
+                  {" "}
+                  <BsFillTrashFill onClick={() => onDeleteMark(index)} />
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {marks.map((mark, index) => (
-                <tr key={index}>
-                  <td className="centered">{index + 1}</td>
-                  <td className="centered">{`(${mark.w}, ${mark.h})`}</td>
-                  <td className="centered">{`(${mark.x}, ${mark.y})`}</td>
-                  <td className="centered">
-                    {" "}
-                    <BsFillTrashFill onClick={() => onDeleteMark(index)} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
     </React.Fragment>
   );
