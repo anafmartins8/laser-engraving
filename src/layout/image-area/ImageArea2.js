@@ -1,11 +1,16 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setImg } from "../../store/slices/canvasSlice";
+import { setImg, addLine, editLine } from "../../store/slices/canvasSlice";
+import { DEFAULT_LINE } from "../../consts/line.consts";
+import { draw_line, draw_rect, fill_rect } from "../../utils/line.utils";
 import p5 from "p5";
+
+const MAX_LINES = 2;
 
 function ImageArea2() {
   const divRef = useRef(null);
   const imgState = useSelector((state) => state.canvas.img);
+  const { lines } = useSelector((state) => state.canvas);
   const dispatch = useDispatch();
   const imgStateRef = useRef(imgState); //create a mutable reference to img and access its current value inside the sketch function
 
@@ -53,15 +58,63 @@ function ImageArea2() {
         if (loadedImg) {
           p5.image(loadedImg, tox, toy, tow, toh);
         }
+        lines.forEach((line, i) => {
+          //console.log("LINE LINE LINE", line);
+          draw_line(p5, line, tox, tox + tow);
+          draw_rect(p5, line, tox, tow, wcontainer);
+          if (i === MAX_LINES - 1) {
+            fill_rect(p5, line, tox, tow, lines[0].y);
+          }
+        });
       };
 
       p5.mouseDragged = () => {
+        // Update the values of image
         const { tox, toy } = imgStateRef.current;
         dispatch(
           setImg({
             ...imgStateRef.current,
             tox: tox + p5.mouseX - p5.pmouseX,
             toy: toy + p5.mouseY - p5.pmouseY,
+          })
+        );
+
+        //Update the values of lines
+        lines.forEach((line, i) => {
+          dispatch(
+            editLine({
+              index: i,
+              line: {
+                ...line,
+                inTranslation: true,
+                pointLine: line.pointLine + p5.mouseY - p5.pmouseY,
+              },
+            })
+          );
+        });
+      };
+
+      p5.mouseReleased = () => {
+        lines.forEach((line, i) => {
+          dispatch(
+            editLine({
+              index: i,
+              line: { ...line, inTranslation: false },
+            })
+          );
+        });
+      };
+
+      p5.doubleClicked = () => {
+        if (lines.length === MAX_LINES) {
+          return;
+        }
+
+        dispatch(
+          addLine({
+            ...DEFAULT_LINE,
+            y: p5.mouseY,
+            pointLine: p5.mouseY,
           })
         );
       };
@@ -98,7 +151,7 @@ function ImageArea2() {
         }
       };
     },
-    [dispatch]
+    [dispatch, lines]
   );
 
   useEffect(() => {
