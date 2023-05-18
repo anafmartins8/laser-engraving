@@ -9,4 +9,5 @@ export const DEFAULT_IMAGE = {
   h: 0,
   tow: 0,
   toh: 0,
+  zoom: 0.01,
 };
