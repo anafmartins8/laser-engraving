@@ -10,13 +10,15 @@ const MAX_LINES = 2;
 function ImageArea2() {
   const divRef = useRef(null);
   const imgState = useSelector((state) => state.canvas.img);
-  const { lines } = useSelector((state) => state.canvas);
+  const linesState = useSelector((state) => state.canvas.lines);
   const dispatch = useDispatch();
   const imgStateRef = useRef(imgState); //create a mutable reference to img and access its current value inside the sketch function
+  const linesStateRef = useRef(linesState); //create a mutable reference to lines and access its current value inside the sketch function
 
   useEffect(() => {
     imgStateRef.current = imgState;
-  }, [imgState]);
+    linesStateRef.current = linesState;
+  }, [imgState, linesState]);
 
   const sketch = (p5) => {
     let wcontainer, hcontainer;
@@ -57,12 +59,12 @@ function ImageArea2() {
       if (loadedImg) {
         p5.image(loadedImg, tox, toy, tow, toh);
       }
-      lines.forEach((line, i) => {
+      linesStateRef.current.forEach((line, i) => {
         //console.log("LINE LINE LINE", line);
         draw_line(p5, line, tox, tox + tow);
         draw_rect(p5, line, tox, tow, wcontainer);
         if (i === MAX_LINES - 1) {
-          fill_rect(p5, line, tox, tow, lines[0].y);
+          fill_rect(p5, line, tox, tow, linesStateRef.current[0].y);
         }
       });
     };
@@ -79,7 +81,7 @@ function ImageArea2() {
       );
 
       //Update the values of lines
-      lines.forEach((line, i) => {
+      linesStateRef.current.forEach((line, i) => {
         dispatch(
           editLine({
             index: i,
@@ -94,7 +96,7 @@ function ImageArea2() {
     };
 
     p5.mouseReleased = () => {
-      lines.forEach((line, i) => {
+      linesStateRef.current.forEach((line, i) => {
         dispatch(
           editLine({
             index: i,
@@ -105,7 +107,7 @@ function ImageArea2() {
     };
 
     p5.doubleClicked = () => {
-      if (lines.length === MAX_LINES) {
+      if (linesStateRef.current.length === MAX_LINES) {
         return;
       }
 
