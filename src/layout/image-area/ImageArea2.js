@@ -70,7 +70,7 @@ function ImageArea2() {
     };
 
     p5.mouseDragged = () => {
-      // Update the values of image
+      //update the values of image
       const { tox, toy } = imgStateRef.current;
       dispatch(
         setImg({
@@ -80,7 +80,7 @@ function ImageArea2() {
         })
       );
 
-      //Update the values of lines
+      //update the values of lines
       linesStateRef.current.forEach((line, i) => {
         dispatch(
           editLine({
@@ -88,7 +88,7 @@ function ImageArea2() {
             line: {
               ...line,
               inTranslation: true,
-              pointLine: line.pointLine + p5.mouseY - p5.pmouseY,
+              y: line.y + p5.mouseY - p5.pmouseY,
             },
           })
         );
@@ -115,7 +115,6 @@ function ImageArea2() {
         addLine({
           ...DEFAULT_LINE,
           y: p5.mouseY,
-          pointLine: p5.mouseY,
         })
       );
     };
@@ -126,6 +125,8 @@ function ImageArea2() {
       if (e > 0) {
         //zoom in
         if (tow * (zoom + 1) > 5 * imgStateRef.current.wi) return;
+
+        //update the values of image
         dispatch(
           setImg({
             ...imgStateRef.current,
@@ -135,11 +136,28 @@ function ImageArea2() {
             toh: toh * (zoom + 1),
           })
         );
+
+        //update the values of lines
+        linesStateRef.current.forEach((line, i) => {
+          dispatch(
+            editLine({
+              index: i,
+              line: {
+                ...line,
+                inTranslation: true,
+                y: line.y - zoom * (p5.mouseY - line.y),
+              },
+            })
+          );
+        });
+
         //dispatch(setScale(imgStateRef.current.tow / imgStateRef.current.wi));
       }
       if (e < 0) {
         //zoom out
         if (tow / (zoom + 1) < imgStateRef.current.wi) return;
+
+        //update the values of image
         dispatch(
           setImg({
             ...imgStateRef.current,
@@ -149,6 +167,20 @@ function ImageArea2() {
             toh: toh / (zoom + 1),
           })
         );
+
+        //update the values of lines
+        linesStateRef.current.forEach((line, i) => {
+          dispatch(
+            editLine({
+              index: i,
+              line: {
+                ...line,
+                inTranslation: true,
+                y: line.y + (zoom / (zoom + 1)) * (p5.mouseY - line.y),
+              },
+            })
+          );
+        });
       }
     };
   };

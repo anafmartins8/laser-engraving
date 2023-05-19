@@ -1,7 +1,7 @@
 export function draw_line(p5, line, x1, x2) {
   p5.strokeWeight(1);
   p5.stroke("#F58000");
-  p5.line(x1, line.pointLine, x2, line.pointLine);
+  p5.line(x1, line.y, x2, line.y);
 }
 
 export function draw_rect(p5, line, topx, tow, wcontainer) {

@@ -44,7 +44,7 @@ function BottomSidewall() {
                 {lines.map((line, index) => (
                   <tr key={index}>
                     <td className="centered">{index + 1}</td>
-                    <td className="centered">{`(${line.pointLine})`}</td>
+                    <td className="centered">{`(${line.y})`}</td>
                     <td className="centered">
                       {" "}
                       <BsFillTrashFill onClick={() => onDeleteLine(index)} />
