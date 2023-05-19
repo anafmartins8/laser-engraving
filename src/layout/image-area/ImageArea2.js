@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setImg, addLine, editLine } from "../../store/slices/canvasSlice";
 import { DEFAULT_LINE } from "../../consts/line.consts";
-import { draw_line, draw_rect, fill_rect } from "../../utils/line.utils";
+import { drawLine, drawSquareMove, fillRect } from "../../utils/line.utils";
 import p5 from "p5";
 
 const MAX_LINES = 2;
@@ -60,11 +60,10 @@ function ImageArea2() {
         p5.image(loadedImg, tox, toy, tow, toh);
       }
       linesStateRef.current.forEach((line, i) => {
-        //console.log("LINE LINE LINE", line);
-        draw_line(p5, line, tox, tox + tow);
-        draw_rect(p5, line, tox, tow, wcontainer);
+        drawLine(p5, line, tox, tox + tow);
+        drawSquareMove(p5, line, tox, tow, wcontainer);
         if (i === MAX_LINES - 1) {
-          fill_rect(p5, line, tox, tow, linesStateRef.current[0].y);
+          fillRect(p5, line, tox, tow, linesStateRef.current[0].y);
         }
       });
     };
