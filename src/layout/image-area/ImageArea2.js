@@ -88,8 +88,9 @@ function ImageArea2() {
     };
 
     p5.mouseDragged = () => {
-      const { tox, toy } = imgStateRef.current;
+      if (isOutSideOfBounds()) return;
 
+      const { tox, toy } = imgStateRef.current;
       const lineToMove = linesStateRef.current.find((line) =>
         lineInTranslation(p5, line)
       );
@@ -144,7 +145,7 @@ function ImageArea2() {
     };
 
     p5.doubleClicked = () => {
-      if (linesStateRef.current.length === MAX_LINES) {
+      if (isOutSideOfImage() || linesStateRef.current.length === MAX_LINES) {
         return;
       }
 
@@ -157,6 +158,7 @@ function ImageArea2() {
     };
 
     p5.mouseWheel = (event) => {
+      if (isOutSideOfBounds() || isOutSideOfImage()) return;
       var e = -event.delta;
       const { tox, toy, tow, toh, zoom } = imgStateRef.current;
       if (e > 0) {
@@ -217,6 +219,25 @@ function ImageArea2() {
           );
         });
       }
+    };
+
+    const isOutSideOfBounds = () => {
+      return (
+        p5.mouseX > wcontainer ||
+        p5.mouseX < 0 ||
+        p5.mouseY > hcontainer ||
+        p5.mouseY < 0
+      );
+    };
+
+    const isOutSideOfImage = () => {
+      const { x, y, tox, toy, tow, toh } = imgStateRef.current;
+      return (
+        p5.mouseX > tox - x + tow ||
+        p5.mouseX < tox - x ||
+        p5.mouseY > toy - y + toh ||
+        p5.mouseY < toy - y
+      );
     };
   };
 
