@@ -2,7 +2,12 @@ import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setImg, addLine, editLine } from "../../store/slices/canvasSlice";
 import { DEFAULT_LINE } from "../../consts/line.consts";
-import { drawLine, drawSquareMove, fillRect } from "../../utils/line.utils";
+import {
+  drawLine,
+  drawTranslationPoint,
+  fillROI,
+  lineInTranslation,
+} from "../../utils/line.utils";
 import p5 from "p5";
 
 const MAX_LINES = 2;
@@ -61,37 +66,70 @@ function ImageArea2() {
       }
       linesStateRef.current.forEach((line, i) => {
         drawLine(p5, line, tox, tox + tow);
-        drawSquareMove(p5, line, tox, tow, wcontainer);
         if (i === MAX_LINES - 1) {
-          fillRect(p5, line, tox, tow, linesStateRef.current[0].y);
+          fillROI(p5, line, tox, tow, linesStateRef.current[0].y);
         }
-      });
-    };
-
-    p5.mouseDragged = () => {
-      //update the values of image
-      const { tox, toy } = imgStateRef.current;
-      dispatch(
-        setImg({
-          ...imgStateRef.current,
-          tox: tox + p5.mouseX - p5.pmouseX,
-          toy: toy + p5.mouseY - p5.pmouseY,
-        })
-      );
-
-      //update the values of lines
-      linesStateRef.current.forEach((line, i) => {
         dispatch(
           editLine({
             index: i,
             line: {
               ...line,
-              inTranslation: true,
-              y: line.y + p5.mouseY - p5.pmouseY,
+              translationPoint: drawTranslationPoint(
+                p5,
+                line,
+                tox,
+                tow,
+                wcontainer
+              ),
             },
           })
         );
       });
+    };
+
+    p5.mouseDragged = () => {
+      const { tox, toy } = imgStateRef.current;
+
+      const lineToMove = linesStateRef.current.find((line) =>
+        lineInTranslation(p5, line)
+      );
+      const i = linesStateRef.current.findIndex((line) =>
+        lineInTranslation(p5, line)
+      );
+
+      if (lineToMove) {
+        //update the values of lines
+        dispatch(
+          editLine({
+            index: i,
+            line: {
+              ...lineToMove,
+              y: lineToMove.y + p5.mouseY - p5.pmouseY,
+              inTranslation: true,
+            },
+          })
+        );
+      } else {
+        //update the values of image and lines
+        dispatch(
+          setImg({
+            ...imgStateRef.current,
+            tox: tox + p5.mouseX - p5.pmouseX,
+            toy: toy + p5.mouseY - p5.pmouseY,
+          })
+        );
+        linesStateRef.current.forEach((line, i) => {
+          dispatch(
+            editLine({
+              index: i,
+              line: {
+                ...line,
+                y: line.y + p5.mouseY - p5.pmouseY,
+              },
+            })
+          );
+        });
+      }
     };
 
     p5.mouseReleased = () => {
@@ -143,7 +181,6 @@ function ImageArea2() {
               index: i,
               line: {
                 ...line,
-                inTranslation: true,
                 y: line.y - zoom * (p5.mouseY - line.y),
               },
             })
@@ -174,7 +211,6 @@ function ImageArea2() {
               index: i,
               line: {
                 ...line,
-                inTranslation: true,
                 y: line.y + (zoom / (zoom + 1)) * (p5.mouseY - line.y),
               },
             })
