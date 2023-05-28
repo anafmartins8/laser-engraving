@@ -5,10 +5,19 @@ import Info from "../../../components/common/info/Info";
 import TrainSidewall from "./train-sidewall/TrainSidewall";
 import Tabs from "../../../components/common/tabs/Tabs";
 import "./BottomSidewall.css";
+import { useSelector, useDispatch } from "react-redux";
 import { TbArrowRightSquare } from "react-icons/tb";
+import { BsFillTrashFill } from "react-icons/bs";
+import { deleteLine } from "../../../store/slices/canvasSlice";
 
 function BottomSidewall() {
   const [isToogled, setIsToggled] = useState(false);
+  const { lines } = useSelector((state) => state.canvas);
+  const dispatch = useDispatch();
+
+  const onDeleteLine = (lineId) => {
+    dispatch(deleteLine(lineId));
+  };
 
   return (
     <div className="work-container2">
@@ -23,6 +32,28 @@ function BottomSidewall() {
       <Tabs>
         <div label="Select ROI">
           <div className="bottom-component">
+            <table>
+              <thead>
+                <tr>
+                  <th className="centered">Line Number</th>
+                  <th className="centered">Y Canvas</th>
+                  <th className="centered"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {lines.map((line, index) => (
+                  <tr key={index}>
+                    <td className="centered">{index + 1}</td>
+                    <td className="centered">{`(${line.y})`}</td>
+                    <td className="centered">
+                      {" "}
+                      <BsFillTrashFill onClick={() => onDeleteLine(index)} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
             <div className="icon-title">
               <BsInfoLg />
             </div>
