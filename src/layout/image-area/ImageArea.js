@@ -226,7 +226,7 @@ function ImageArea() {
           rectx += p5.mouseX - p5.pmouseX;
           recty += p5.mouseY - p5.pmouseY;
         }
-      } else if (canvasMode === CANVAS_MODES.dragMode) {
+      } else if (canvasMode === CANVAS_MODES.roiMode) {
         //modo drag
         if (p5.mouseIsPressed) {
           if ((line1mouse || line1mousetranslation) && !isOutSideOfImage()) {

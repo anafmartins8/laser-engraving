@@ -3,7 +3,7 @@ import { CANVAS_MODES } from "../../consts/canvas.consts";
 import { DEFAULT_IMAGE } from "../../consts/image.consts";
 
 const canvasSliceInitialState = {
-  canvasMode: CANVAS_MODES.dragMode,
+  canvasMode: CANVAS_MODES.roiMode,
   img: DEFAULT_IMAGE,
   lines: [],
 };

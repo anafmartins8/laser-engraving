@@ -7,20 +7,19 @@ import { useSelector, useDispatch } from "react-redux";
 import { CANVAS_MODES } from "../../consts/canvas.consts";
 import { switchCanvasMode } from "../../store/slices/canvasSlice";
 import "./ManipulationArea.css";
+import { toggleIsMarking } from "../../store/slices/marksSlice";
 
 function ManipulationArea() {
   const { canvasMode } = useSelector((state) => state.canvas);
+  const { isMarking } = useSelector((state) => state.marks);
   const dispatch = useDispatch();
 
   const onAddMarkClick = () => {
-    const newCanvasMode =
-      canvasMode === CANVAS_MODES.markMode
-        ? CANVAS_MODES.dragMode
-        : CANVAS_MODES.markMode;
-    dispatch(switchCanvasMode(newCanvasMode));
+    dispatch(toggleIsMarking());
   };
 
-  const isAddingMark = canvasMode === CANVAS_MODES.markMode;
+  const isInLineMode = canvasMode === CANVAS_MODES.roiMode;
+
   return (
     <div className="zoom-container">
       <div>
@@ -38,22 +37,31 @@ function ManipulationArea() {
           <RiZoomOutLine title="Zoom out" />
         </button>
       </div>
-      <div>
-        <button type="button" className="button-info">
-          <TbArrowRightSquare title="Draw lines" />
-        </button>
-      </div>
-      <div>
-        <button
-          type="button"
-          className={`button-info square-icon${
-            isAddingMark ? " button-info-selected" : ""
-          }`}
-          onClick={onAddMarkClick}
-        >
-          <FaVectorSquare title="Draw rectangles" />
-        </button>
-      </div>
+      {isInLineMode && (
+        <div>
+          <button
+            type="button"
+            className={`button-info square-icon${
+              isInLineMode ? " button-info-selected" : ""
+            }`}
+          >
+            <TbArrowRightSquare title="Draw lines" />
+          </button>
+        </div>
+      )}
+      {!isInLineMode && (
+        <div>
+          <button
+            type="button"
+            className={`button-info square-icon${
+              isMarking ? " button-info-selected" : ""
+            }`}
+            onClick={onAddMarkClick}
+          >
+            <FaVectorSquare title="Draw rectangles" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

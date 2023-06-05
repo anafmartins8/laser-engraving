@@ -1,7 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setImg, addLine, editLine } from "../../store/slices/canvasSlice";
+
 import { DEFAULT_LINE } from "../../consts/line.consts";
+import { DEFAULT_MARK } from "../../consts/mark.consts";
+
 import {
   drawLine,
   drawTranslationPoint,
@@ -9,23 +12,42 @@ import {
   lineInTranslation,
 } from "../../utils/line.utils";
 import p5 from "p5";
+import {
+  drawMark,
+  drawTranslationPoint1,
+  markInTranslation,
+} from "../../utils/mark.utils";
+import { CANVAS_MODES } from "../../consts/canvas.consts";
+import { addMark, editMark } from "../../store/slices/marksSlice";
 
 const MAX_LINES = 2;
+const MAX_MARKS = 5;
 
 function ImageArea2() {
   const divRef = useRef(null);
+  const canvasMode = useSelector((state) => state.canvas.canvasMode);
   const imgState = useSelector((state) => state.canvas.img);
   const linesState = useSelector((state) => state.canvas.lines);
+  const marksState = useSelector((state) => state.marks.marks);
+  const { isMarking } = useSelector((state) => state.marks);
+
   const dispatch = useDispatch();
+
+  const canvasModeRef = useRef(canvasMode);
   const imgStateRef = useRef(imgState); //create a mutable reference to img and access its current value inside the sketch function
   const linesStateRef = useRef(linesState); //create a mutable reference to lines and access its current value inside the sketch function
+  const isMarkingRef = useRef(isMarking);
+  const marksStateRef = useRef(marksState); //create a mutable reference to lines and access its current value inside the sketch function
 
   useEffect(() => {
+    canvasModeRef.current = canvasMode;
     imgStateRef.current = imgState;
     linesStateRef.current = linesState;
-  }, [imgState, linesState]);
+    isMarkingRef.current = isMarking;
+    marksStateRef.current = marksState;
+  }, [canvasMode, imgState, linesState, isMarking, marksState]);
 
-  const sketch = (p5) => {
+  const sketch = useCallback((p5) => {
     let wcontainer, hcontainer;
     let loadedImg;
     p5.preload = () => {
@@ -36,20 +58,18 @@ function ImageArea2() {
         "http://localhost:3000/images/SW_img.jpeg",
         (p1) => {
           loadedImg = p1;
-          const { initialScale } = imgStateRef.current;
-          dispatch(
-            setImg({
-              ...imgStateRef.current,
-              initialScale: wcontainer / p1.width,
-              wi: p1.width * initialScale,
-              w: p1.width * initialScale,
-              tow: p1.width * initialScale,
-              h: p1.height * initialScale,
-              toh: p1.height * initialScale,
-            })
-          );
+          const scale = wcontainer / p1.width;
+          const preloadedImg = {
+            ...imgState,
+            scale: scale,
+            wi: p1.width * scale,
+            w: p1.width * scale,
+            tow: p1.width * scale,
+            h: p1.height * scale,
+            toh: p1.height * scale,
+          };
+          dispatch(setImg(preloadedImg));
         },
-        console.log(imgStateRef.current.initialScale),
         (e) => console.log("error", e)
       );
     };
@@ -64,49 +84,125 @@ function ImageArea2() {
       if (loadedImg) {
         p5.image(loadedImg, tox, toy, tow, toh);
       }
-      linesStateRef.current.forEach((line, i) => {
-        drawLine(p5, line, tox, tox + tow);
-        if (i === MAX_LINES - 1) {
-          fillROI(p5, line, tox, tow, linesStateRef.current[0].y);
-        }
+      if (canvasModeRef.current === CANVAS_MODES.roiMode) {
+        console.log("wtf", canvasModeRef.current);
+        linesStateRef.current.forEach((line, i) => {
+          drawLine(p5, line, tox, tox + tow);
+          if (i === MAX_LINES - 1) {
+            fillROI(p5, line, tox, tow, linesStateRef.current[0].y);
+          }
+          dispatch(
+            editLine({
+              index: i,
+              line: {
+                ...line,
+                translationPoint: drawTranslationPoint(
+                  p5,
+                  line,
+                  tox,
+                  tow,
+                  wcontainer
+                ),
+              },
+            })
+          );
+        });
+      }
+
+      console.log("marks", marksStateRef.current);
+      marksStateRef.current.forEach((mark, i) => {
+        drawMark(p5, mark);
         dispatch(
-          editLine({
+          editMark({
             index: i,
-            line: {
-              ...line,
-              translationPoint: drawTranslationPoint(
-                p5,
-                line,
-                tox,
-                tow,
-                wcontainer
-              ),
+            mark: {
+              ...mark,
+              translationPoint: drawTranslationPoint1(p5, mark),
             },
           })
         );
       });
     };
 
+    p5.mousePressed = () => {
+      const lineIndex = linesStateRef.current.findIndex((line) =>
+        lineInTranslation(p5, line)
+      );
+
+      if (lineIndex !== -1) {
+        const lineToMove = linesStateRef.current[lineIndex];
+
+        dispatch(
+          editLine({
+            index: lineIndex,
+            line: {
+              ...lineToMove,
+              inTranslation: true,
+            },
+          })
+        );
+      }
+
+      if (
+        canvasModeRef.current === CANVAS_MODES.markMode &&
+        isMarkingRef.current
+      ) {
+        dispatch(
+          addMark({
+            ...DEFAULT_MARK,
+            x: p5.pmouseX,
+            y: p5.pmouseY,
+          })
+        );
+      }
+    };
+
     p5.mouseDragged = () => {
+      /*if (isOutSideOfImage() || marksStateRef.current.length === MAX_MARKS) {
+          return;
+        }
+  
+        console.log(marksStateRef.current.length);
+        const { w, h } = marksStateRef.current;
+        console.log("w/h", w, h);
+  
+        if (p5.mouseIsPressed) {
+         
+        }*/
+
       if (isOutSideOfBounds()) return;
 
       const { tox, toy } = imgStateRef.current;
-      const lineToMove = linesStateRef.current.find((line) =>
-        lineInTranslation(p5, line)
-      );
-      const i = linesStateRef.current.findIndex((line) =>
-        lineInTranslation(p5, line)
+
+      const lineToMoveIndex = linesStateRef.current.findIndex(
+        (line) => line.inTranslation === true
       );
 
-      if (lineToMove) {
+      if (lineToMoveIndex !== -1) {
+        const lineToMove = linesStateRef.current[lineToMoveIndex];
         //update the values of lines
         dispatch(
           editLine({
-            index: i,
+            index: lineToMoveIndex,
             line: {
               ...lineToMove,
               y: lineToMove.y + p5.mouseY - p5.pmouseY,
-              inTranslation: true,
+            },
+          })
+        );
+      } else if (
+        canvasModeRef.current === CANVAS_MODES.markMode &&
+        isMarkingRef.current
+      ) {
+        const currentMark =
+          marksStateRef.current[marksStateRef.current.length - 1];
+        dispatch(
+          editMark({
+            index: marksStateRef.current.length - 1,
+            mark: {
+              ...currentMark,
+              w: currentMark.w + p5.mouseX - p5.pmouseX,
+              h: currentMark.h + p5.mouseY - p5.pmouseY,
             },
           })
         );
@@ -145,7 +241,11 @@ function ImageArea2() {
     };
 
     p5.doubleClicked = () => {
-      if (isOutSideOfImage() || linesStateRef.current.length === MAX_LINES) {
+      if (
+        isOutSideOfImage() ||
+        linesStateRef.current.length === MAX_LINES ||
+        canvasModeRef.current !== CANVAS_MODES.roiMode
+      ) {
         return;
       }
 
@@ -188,9 +288,8 @@ function ImageArea2() {
             })
           );
         });
-
-        //dispatch(setScale(imgStateRef.current.tow / imgStateRef.current.wi));
       }
+
       if (e < 0) {
         //zoom out
         if (tow / (zoom + 1) < imgStateRef.current.wi) return;
@@ -239,14 +338,14 @@ function ImageArea2() {
         p5.mouseY < toy - y
       );
     };
-  };
+  }, []);
 
   useEffect(() => {
     const p5Instance = new p5(sketch);
     return () => {
       p5Instance.remove();
     };
-  }, []);
+  }, [sketch]);
 
   return <div className="image-container" ref={divRef}></div>;
 }
