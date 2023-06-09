@@ -143,7 +143,8 @@ function ImageArea2() {
 
       if (
         canvasModeRef.current === CANVAS_MODES.markMode &&
-        isMarkingRef.current
+        isMarkingRef.current &&
+        marksStateRef.current.length !== MAX_MARKS
       ) {
         dispatch(
           addMark({
