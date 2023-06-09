@@ -85,7 +85,6 @@ function ImageArea2() {
         p5.image(loadedImg, tox, toy, tow, toh);
       }
       if (canvasModeRef.current === CANVAS_MODES.roiMode) {
-        console.log("wtf", canvasModeRef.current);
         linesStateRef.current.forEach((line, i) => {
           drawLine(p5, line, tox, tox + tow);
           if (i === MAX_LINES - 1) {
@@ -109,7 +108,6 @@ function ImageArea2() {
         });
       }
 
-      console.log("marks", marksStateRef.current);
       marksStateRef.current.forEach((mark, i) => {
         drawMark(p5, mark);
         dispatch(
@@ -158,18 +156,6 @@ function ImageArea2() {
     };
 
     p5.mouseDragged = () => {
-      /*if (isOutSideOfImage() || marksStateRef.current.length === MAX_MARKS) {
-          return;
-        }
-  
-        console.log(marksStateRef.current.length);
-        const { w, h } = marksStateRef.current;
-        console.log("w/h", w, h);
-  
-        if (p5.mouseIsPressed) {
-         
-        }*/
-
       if (isOutSideOfBounds()) return;
 
       const { tox, toy } = imgStateRef.current;
