@@ -36,7 +36,7 @@ function BottomSidewall() {
               <thead>
                 <tr>
                   <th className="centered">Line Number</th>
-                  <th className="centered">Y Canvas</th>
+                  <th className="centered">Y Image</th>
                   <th className="centered"></th>
                 </tr>
               </thead>
@@ -44,7 +44,7 @@ function BottomSidewall() {
                 {lines.map((line, index) => (
                   <tr key={index}>
                     <td className="centered">{index + 1}</td>
-                    <td className="centered">{`(${line.y})`}</td>
+                    <td className="centered">{`(${line.yImage})`}</td>
                     <td className="centered">
                       {" "}
                       <BsFillTrashFill onClick={() => onDeleteLine(index)} />

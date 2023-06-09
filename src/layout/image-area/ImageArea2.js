@@ -58,15 +58,15 @@ function ImageArea2() {
         "http://localhost:3000/images/SW_img.jpeg",
         (p1) => {
           loadedImg = p1;
-          const scale = wcontainer / p1.width;
+          const initialScale = wcontainer / p1.width;
           const preloadedImg = {
             ...imgState,
-            scale: scale,
-            wi: p1.width * scale,
-            w: p1.width * scale,
-            tow: p1.width * scale,
-            h: p1.height * scale,
-            toh: p1.height * scale,
+            initialScale: initialScale,
+            wi: p1.width * initialScale,
+            w: p1.width * initialScale,
+            tow: p1.width * initialScale,
+            h: p1.height * initialScale,
+            toh: p1.height * initialScale,
           };
           dispatch(setImg(preloadedImg));
         },
@@ -173,6 +173,9 @@ function ImageArea2() {
             line: {
               ...lineToMove,
               y: lineToMove.y + p5.mouseY - p5.pmouseY,
+              yImage: convertToRealScale(
+                lineToMove.y + imgStateRef.current.y - imgStateRef.current.toy
+              ),
             },
           })
         );
@@ -239,6 +242,9 @@ function ImageArea2() {
         addLine({
           ...DEFAULT_LINE,
           y: p5.mouseY,
+          yImage: convertToRealScale(
+            p5.mouseY + imgStateRef.current.y - imgStateRef.current.toy
+          ),
         })
       );
     };
@@ -246,7 +252,7 @@ function ImageArea2() {
     p5.mouseWheel = (event) => {
       if (isOutSideOfBounds() || isOutSideOfImage()) return;
       var e = -event.delta;
-      const { tox, toy, tow, toh, zoom } = imgStateRef.current;
+      const { wi, tox, toy, tow, toh, zoom } = imgStateRef.current;
       if (e > 0) {
         //zoom in
         if (tow * (zoom + 1) > 5 * imgStateRef.current.wi) return;
@@ -259,6 +265,7 @@ function ImageArea2() {
             toy: toy - zoom * (p5.mouseY - toy),
             tow: tow * (zoom + 1),
             toh: toh * (zoom + 1),
+            scale: imgStateRef.current.tow / wi,
           })
         );
 
@@ -288,6 +295,7 @@ function ImageArea2() {
             toy: toy + (zoom / (zoom + 1)) * (p5.mouseY - toy),
             tow: tow / (zoom + 1),
             toh: toh / (zoom + 1),
+            scale: imgStateRef.current.tow / wi,
           })
         );
 
@@ -323,6 +331,11 @@ function ImageArea2() {
         p5.mouseY > toy - y + toh ||
         p5.mouseY < toy - y
       );
+    };
+
+    const convertToRealScale = (number) => {
+      const { initialScale, scale } = imgStateRef.current;
+      return (number / (initialScale * scale)).toFixed(1);
     };
   }, []);
 
