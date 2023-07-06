@@ -283,6 +283,22 @@ function ImageArea2() {
               })
             );
           });
+
+          //upadates the values of marks
+          marksStateRef.current.forEach((mark, i) => {
+            dispatch(
+              editMark({
+                index: i,
+                mark: {
+                  ...mark,
+                  x: mark.x - zoom * (p5.mouseX - mark.x),
+                  y: mark.y - zoom * (p5.mouseY - mark.y),
+                  w: mark.w * (zoom + 1),
+                  h: mark.h * (zoom + 1),
+                },
+              })
+            );
+          });
         }
       }
 
@@ -311,6 +327,22 @@ function ImageArea2() {
                 line: {
                   ...line,
                   y: line.y + (zoom / (zoom + 1)) * (p5.mouseY - line.y),
+                },
+              })
+            );
+          });
+
+          //upadates the values of marks
+          marksStateRef.current.forEach((mark, i) => {
+            dispatch(
+              editMark({
+                index: i,
+                mark: {
+                  ...mark,
+                  x: mark.x + (zoom / (zoom + 1)) * (p5.mouseX - mark.x),
+                  y: mark.y + (zoom / (zoom + 1)) * (p5.mouseY - mark.y),
+                  w: mark.w / (zoom + 1),
+                  h: mark.h / (zoom + 1),
                 },
               })
             );
