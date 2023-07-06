@@ -216,6 +216,18 @@ function ImageArea2() {
             })
           );
         });
+        marksStateRef.current.forEach((mark, i) => {
+          dispatch(
+            editMark({
+              index: i,
+              mark: {
+                ...mark,
+                x: mark.x + p5.mouseX - p5.pmouseX,
+                y: mark.y + p5.mouseY - p5.pmouseY,
+              },
+            })
+          );
+        });
       }
     };
 
