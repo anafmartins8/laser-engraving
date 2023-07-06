@@ -256,62 +256,66 @@ function ImageArea2() {
       const { wi, tox, toy, tow, toh, zoom } = imgStateRef.current;
       if (e > 0) {
         //zoom in
-        if (tow * (zoom + 1) > 5 * imgStateRef.current.wi) return;
+        for (var i = 0; i < e; i++) {
+          if (tow * (zoom + 1) > 4 * wi) return;
 
-        //update the values of image
-        dispatch(
-          setImg({
-            ...imgStateRef.current,
-            tox: tox - zoom * (p5.mouseX - tox),
-            toy: toy - zoom * (p5.mouseY - toy),
-            tow: tow * (zoom + 1),
-            toh: toh * (zoom + 1),
-            scale: imgStateRef.current.tow / wi,
-          })
-        );
-
-        //update the values of lines
-        linesStateRef.current.forEach((line, i) => {
+          //update the values of image
           dispatch(
-            editLine({
-              index: i,
-              line: {
-                ...line,
-                y: line.y - zoom * (p5.mouseY - line.y),
-              },
+            setImg({
+              ...imgStateRef.current,
+              tox: tox - zoom * (p5.mouseX - tox),
+              toy: toy - zoom * (p5.mouseY - toy),
+              tow: tow * (zoom + 1),
+              toh: toh * (zoom + 1),
+              scale: (tow * (zoom + 1)) / wi,
             })
           );
-        });
+
+          //update the values of lines
+          linesStateRef.current.forEach((line, i) => {
+            dispatch(
+              editLine({
+                index: i,
+                line: {
+                  ...line,
+                  y: line.y - zoom * (p5.mouseY - line.y),
+                },
+              })
+            );
+          });
+        }
       }
 
       if (e < 0) {
         //zoom out
-        if (tow / (zoom + 1) < imgStateRef.current.wi) return;
+        for (var j = 0; j < -e; j++) {
+          if (tow / (zoom + 1) < wi) return;
 
-        //update the values of image
-        dispatch(
-          setImg({
-            ...imgStateRef.current,
-            tox: tox + (zoom / (zoom + 1)) * (p5.mouseX - tox),
-            toy: toy + (zoom / (zoom + 1)) * (p5.mouseY - toy),
-            tow: tow / (zoom + 1),
-            toh: toh / (zoom + 1),
-            scale: imgStateRef.current.tow / wi,
-          })
-        );
-
-        //update the values of lines
-        linesStateRef.current.forEach((line, i) => {
+          //update the values of image
           dispatch(
-            editLine({
-              index: i,
-              line: {
-                ...line,
-                y: line.y + (zoom / (zoom + 1)) * (p5.mouseY - line.y),
-              },
+            setImg({
+              ...imgStateRef.current,
+              tox: tox + (zoom / (zoom + 1)) * (p5.mouseX - tox),
+              toy: toy + (zoom / (zoom + 1)) * (p5.mouseY - toy),
+              tow: tow / (zoom + 1),
+              toh: toh / (zoom + 1),
+              scale: tow / (zoom + 1) / wi,
             })
           );
-        });
+
+          //update the values of lines
+          linesStateRef.current.forEach((line, i) => {
+            dispatch(
+              editLine({
+                index: i,
+                line: {
+                  ...line,
+                  y: line.y + (zoom / (zoom + 1)) * (p5.mouseY - line.y),
+                },
+              })
+            );
+          });
+        }
       }
     };
 
