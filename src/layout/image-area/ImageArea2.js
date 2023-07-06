@@ -151,6 +151,12 @@ function ImageArea2() {
             ...DEFAULT_MARK,
             x: p5.pmouseX,
             y: p5.pmouseY,
+            xImage: convertToRealScale(
+              p5.mouseX + imgStateRef.current.x - imgStateRef.current.tox
+            ),
+            yImage: convertToRealScale(
+              p5.mouseY + imgStateRef.current.y - imgStateRef.current.toy
+            ),
           })
         );
       }
@@ -193,6 +199,8 @@ function ImageArea2() {
               ...currentMark,
               w: currentMark.w + p5.mouseX - p5.pmouseX,
               h: currentMark.h + p5.mouseY - p5.pmouseY,
+              wImage: convertToRealScale(currentMark.w),
+              hImage: convertToRealScale(currentMark.h),
             },
           })
         );
