@@ -129,6 +129,10 @@ function ImageArea2() {
         lineInTranslation(p5, line)
       );
 
+      const markIndex = marksStateRef.current.findIndex((mark) =>
+        markInTranslation(p5, mark)
+      );
+
       if (lineIndex !== -1) {
         const lineToMove = linesStateRef.current[lineIndex];
 
@@ -141,9 +145,19 @@ function ImageArea2() {
             },
           })
         );
-      }
+      } else if (markIndex !== -1) {
+        const markToMove = marksStateRef.current[markIndex];
 
-      if (
+        dispatch(
+          editMark({
+            index: markIndex,
+            mark: {
+              ...markToMove,
+              inTranslation: true,
+            },
+          })
+        );
+      } else if (
         canvasModeRef.current === CANVAS_MODES.markMode &&
         isMarkingRef.current &&
         marksStateRef.current.length !== MAX_MARKS
@@ -173,6 +187,10 @@ function ImageArea2() {
         (line) => line.inTranslation === true
       );
 
+      const markToMoveIndex = marksStateRef.current.findIndex(
+        (mark) => mark.inTranslation === true
+      );
+
       if (lineToMoveIndex !== -1) {
         const lineToMove = linesStateRef.current[lineToMoveIndex];
         //update the values of lines
@@ -184,6 +202,25 @@ function ImageArea2() {
               y: lineToMove.y + p5.mouseY - p5.pmouseY,
               yImage: convertToRealScale(
                 lineToMove.y + imgStateRef.current.y - imgStateRef.current.toy
+              ),
+            },
+          })
+        );
+      } else if (markToMoveIndex !== -1) {
+        const markToMove = marksStateRef.current[markToMoveIndex];
+        //update the values of mark
+        dispatch(
+          editMark({
+            index: markToMoveIndex,
+            mark: {
+              ...markToMove,
+              x: markToMove.x + p5.mouseX - p5.pmouseX,
+              y: markToMove.y + p5.mouseY - p5.pmouseY,
+              xImage: convertToRealScale(
+                markToMove.x + imgStateRef.current.x - imgStateRef.current.tox
+              ),
+              yImage: convertToRealScale(
+                markToMove.y + imgStateRef.current.y - imgStateRef.current.toy
               ),
             },
           })
@@ -247,6 +284,15 @@ function ImageArea2() {
           editLine({
             index: i,
             line: { ...line, inTranslation: false },
+          })
+        );
+      });
+
+      marksStateRef.current.forEach((mark, i) => {
+        dispatch(
+          editMark({
+            index: i,
+            mark: { ...mark, inTranslation: false },
           })
         );
       });
@@ -394,7 +440,7 @@ function ImageArea2() {
 
     const convertToRealScale = (number) => {
       const { initialScale, scale } = imgStateRef.current;
-      return (number / (initialScale * scale)).toFixed(1);
+      return parseFloat((number / (initialScale * scale)).toFixed(1));
     };
   }, []);
 
