@@ -106,20 +106,20 @@ function ImageArea2() {
             })
           );
         });
+      } else if (canvasModeRef.current === CANVAS_MODES.markMode) {
+        marksStateRef.current.forEach((mark, i) => {
+          drawMark(p5, mark);
+          dispatch(
+            editMark({
+              index: i,
+              mark: {
+                ...mark,
+                translationPoint: drawTranslationPoint1(p5, mark),
+              },
+            })
+          );
+        });
       }
-
-      marksStateRef.current.forEach((mark, i) => {
-        drawMark(p5, mark);
-        dispatch(
-          editMark({
-            index: i,
-            mark: {
-              ...mark,
-              translationPoint: drawTranslationPoint1(p5, mark),
-            },
-          })
-        );
-      });
     };
 
     p5.mousePressed = () => {
