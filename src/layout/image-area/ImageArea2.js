@@ -123,6 +123,8 @@ function ImageArea2() {
     };
 
     p5.mousePressed = () => {
+      if (isOutSideOfBounds()) return;
+
       const lineIndex = linesStateRef.current.findIndex((line) =>
         lineInTranslation(p5, line)
       );
