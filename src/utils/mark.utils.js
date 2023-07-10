@@ -45,3 +45,30 @@ export function markInResizingLeft(p5, mark) {
     p5.pmouseY < mark.y + mark.h / 2 + 10
   );
 }
+
+export function markInResizingRight(p5, mark) {
+  return (
+    p5.pmouseX > mark.x + mark.w - 10 &&
+    p5.pmouseX < mark.x + mark.w + 10 &&
+    p5.pmouseY > mark.y + mark.h / 2 - 10 &&
+    p5.pmouseY < mark.y + mark.h / 2 + 10
+  );
+}
+
+export function markInResizingTop(p5, mark) {
+  return (
+    p5.pmouseX > mark.x + mark.w / 2 - 10 &&
+    p5.pmouseX < mark.x + mark.w / 2 + 10 &&
+    p5.pmouseY > mark.y - 10 &&
+    p5.pmouseY < mark.y + 10
+  );
+}
+
+export function markInResizingBottom(p5, mark) {
+  return (
+    p5.pmouseX > mark.x + mark.w / 2 - 10 &&
+    p5.pmouseX < mark.x + mark.w / 2 + 10 &&
+    p5.pmouseY > mark.y + mark.h - 10 &&
+    p5.pmouseY < mark.y + mark.h + 10
+  );
+}

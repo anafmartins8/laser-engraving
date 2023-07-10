@@ -19,6 +19,7 @@ import {
   drawResizePointsY,
   markInTranslation,
   markInResizingLeft,
+  markInResizingRight,
 } from "../../utils/mark.utils";
 import { CANVAS_MODES } from "../../consts/canvas.consts";
 import { addMark, editMark } from "../../store/slices/marksSlice";
@@ -142,6 +143,10 @@ function ImageArea2() {
         markInResizingLeft(p5, mark)
       );
 
+      const markToResizeRightIndex = marksStateRef.current.findIndex((mark) =>
+        markInResizingRight(p5, mark)
+      );
+
       if (lineIndex !== -1) {
         const lineToMove = linesStateRef.current[lineIndex];
 
@@ -175,6 +180,18 @@ function ImageArea2() {
             mark: {
               ...markLeftToResize,
               inResizingLeft: true,
+            },
+          })
+        );
+      } else if (markToResizeRightIndex !== -1) {
+        const markRightToResize = marksStateRef.current[markToResizeRightIndex];
+
+        dispatch(
+          editMark({
+            index: markToResizeRightIndex,
+            mark: {
+              ...markRightToResize,
+              inResizingRight: true,
             },
           })
         );
@@ -216,6 +233,10 @@ function ImageArea2() {
         (mark) => mark.inResizingLeft === true
       );
 
+      const markToResizeRightIndex = marksStateRef.current.findIndex(
+        (mark) => mark.inResizingRight === true
+      );
+
       if (lineToMoveIndex !== -1) {
         const lineToMove = linesStateRef.current[lineToMoveIndex];
         //update the values of lines
@@ -252,7 +273,6 @@ function ImageArea2() {
         );
       } else if (markToResizeLeftIndex !== -1) {
         const markLeftToResize = marksStateRef.current[markToResizeLeftIndex];
-        console.log(markLeftToResize.x);
         dispatch(
           editMark({
             index: markToResizeLeftIndex,
@@ -266,6 +286,18 @@ function ImageArea2() {
               ),
               w: markLeftToResize.w - (p5.mouseX - p5.pmouseX),
               wImage: convertToRealScale(markLeftToResize.w),
+            },
+          })
+        );
+      } else if (markToResizeRightIndex !== -1) {
+        const markRightToResize = marksStateRef.current[markToResizeRightIndex];
+        dispatch(
+          editMark({
+            index: markToResizeRightIndex,
+            mark: {
+              ...markRightToResize,
+              w: markRightToResize.w + p5.mouseX - p5.pmouseX,
+              wImage: convertToRealScale(markRightToResize.w),
             },
           })
         );
@@ -336,7 +368,12 @@ function ImageArea2() {
         dispatch(
           editMark({
             index: i,
-            mark: { ...mark, inTranslation: false, inResizingLeft: false },
+            mark: {
+              ...mark,
+              inTranslation: false,
+              inResizingLeft: false,
+              inResizingRight: false,
+            },
           })
         );
       });

@@ -10,4 +10,5 @@ export const DEFAULT_MARK = {
   translationPoint: null,
   inTranslation: false,
   inResizingLeft: false,
+  inResizingRight: false,
 };
