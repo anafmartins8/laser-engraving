@@ -14,7 +14,9 @@ import {
 import p5 from "p5";
 import {
   drawMark,
-  drawTranslationPoint1,
+  drawMarkTranslationPoint,
+  drawResizePointsX,
+  drawResizePointsY,
   markInTranslation,
 } from "../../utils/mark.utils";
 import { CANVAS_MODES } from "../../consts/canvas.consts";
@@ -114,7 +116,9 @@ function ImageArea2() {
               index: i,
               mark: {
                 ...mark,
-                translationPoint: drawTranslationPoint1(p5, mark),
+                translationPoint: drawMarkTranslationPoint(p5, mark),
+                resizePointsX: drawResizePointsX(p5, mark),
+                resizePointsY: drawResizePointsY(p5, mark),
               },
             })
           );
