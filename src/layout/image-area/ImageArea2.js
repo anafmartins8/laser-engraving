@@ -20,6 +20,7 @@ import {
   markInTranslation,
   markInResizingLeft,
   markInResizingRight,
+  markInResizingTop,
 } from "../../utils/mark.utils";
 import { CANVAS_MODES } from "../../consts/canvas.consts";
 import { addMark, editMark } from "../../store/slices/marksSlice";
@@ -147,6 +148,10 @@ function ImageArea2() {
         markInResizingRight(p5, mark)
       );
 
+      const markToResizeTopIndex = marksStateRef.current.findIndex((mark) =>
+        markInResizingTop(p5, mark)
+      );
+
       if (lineIndex !== -1) {
         const lineToMove = linesStateRef.current[lineIndex];
 
@@ -195,6 +200,18 @@ function ImageArea2() {
             },
           })
         );
+      } else if (markToResizeTopIndex !== -1) {
+        const markTopToResize = marksStateRef.current[markToResizeTopIndex];
+
+        dispatch(
+          editMark({
+            index: markToResizeTopIndex,
+            mark: {
+              ...markTopToResize,
+              inResizingTop: true,
+            },
+          })
+        );
       } else if (
         canvasModeRef.current === CANVAS_MODES.markMode &&
         isMarkingRef.current &&
@@ -235,6 +252,10 @@ function ImageArea2() {
 
       const markToResizeRightIndex = marksStateRef.current.findIndex(
         (mark) => mark.inResizingRight === true
+      );
+
+      const markToResizeTopIndex = marksStateRef.current.findIndex(
+        (mark) => mark.inResizingTop === true
       );
 
       if (lineToMoveIndex !== -1) {
@@ -298,6 +319,24 @@ function ImageArea2() {
               ...markRightToResize,
               w: markRightToResize.w + p5.mouseX - p5.pmouseX,
               wImage: convertToRealScale(markRightToResize.w),
+            },
+          })
+        );
+      } else if (markToResizeTopIndex !== -1) {
+        const markTopToResize = marksStateRef.current[markToResizeTopIndex];
+        dispatch(
+          editMark({
+            index: markToResizeTopIndex,
+            mark: {
+              ...markTopToResize,
+              y: markTopToResize.y + p5.mouseY - p5.pmouseY,
+              yImage: convertToRealScale(
+                markTopToResize.y +
+                  imgStateRef.current.y -
+                  imgStateRef.current.toy
+              ),
+              h: markTopToResize.h - (p5.mouseY - p5.pmouseY),
+              hImage: convertToRealScale(markTopToResize.h),
             },
           })
         );
@@ -373,6 +412,7 @@ function ImageArea2() {
               inTranslation: false,
               inResizingLeft: false,
               inResizingRight: false,
+              inResizingTop: false,
             },
           })
         );

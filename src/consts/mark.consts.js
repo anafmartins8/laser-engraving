@@ -11,4 +11,5 @@ export const DEFAULT_MARK = {
   inTranslation: false,
   inResizingLeft: false,
   inResizingRight: false,
+  inResizingTop: false,
 };
