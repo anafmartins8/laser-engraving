@@ -15,6 +15,12 @@ export const canvasSlice = createSlice({
     switchCanvasMode: (state, action) => {
       state.canvasMode = action.payload;
     },
+    resetCanvas: (state) => {
+      return {
+        ...state,
+        lines: canvasSliceInitialState.lines,
+      };
+    },
     setImg: (state, action) => {
       return {
         ...state,
@@ -39,7 +45,13 @@ export const canvasSlice = createSlice({
   },
 });
 
-export const { switchCanvasMode, setImg, addLine, editLine, deleteLine } =
-  canvasSlice.actions;
+export const {
+  switchCanvasMode,
+  resetCanvas,
+  setImg,
+  addLine,
+  editLine,
+  deleteLine,
+} = canvasSlice.actions;
 
 export default canvasSlice.reducer;

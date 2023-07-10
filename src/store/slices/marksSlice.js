@@ -24,16 +24,14 @@ export const marksSlice = createSlice({
     deleteMark: (state, action) => {
       state.marks.splice(action.payload, 1);
     },
-    resetMarks: (state) => {
-      state = marksSliceInitialState;
-    },
+    resetMarks: () => marksSliceInitialState,
     toggleIsMarking: (state) => {
       state.isMarking = !state.isMarking;
     },
   },
 });
 
-export const { addMark, editMark, deleteMark, toggleIsMarking } =
+export const { addMark, editMark, deleteMark, resetMarks, toggleIsMarking } =
   marksSlice.actions;
 
 export default marksSlice.reducer;
