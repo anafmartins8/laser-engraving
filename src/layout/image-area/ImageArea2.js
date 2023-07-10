@@ -21,6 +21,7 @@ import {
   markInResizingLeft,
   markInResizingRight,
   markInResizingTop,
+  markInResizingBottom,
 } from "../../utils/mark.utils";
 import { CANVAS_MODES } from "../../consts/canvas.consts";
 import { addMark, editMark } from "../../store/slices/marksSlice";
@@ -152,6 +153,10 @@ function ImageArea2() {
         markInResizingTop(p5, mark)
       );
 
+      const markToResizeBottomIndex = marksStateRef.current.findIndex((mark) =>
+        markInResizingBottom(p5, mark)
+      );
+
       if (lineIndex !== -1) {
         const lineToMove = linesStateRef.current[lineIndex];
 
@@ -212,6 +217,19 @@ function ImageArea2() {
             },
           })
         );
+      } else if (markToResizeBottomIndex !== -1) {
+        const markBottomToResize =
+          marksStateRef.current[markToResizeBottomIndex];
+
+        dispatch(
+          editMark({
+            index: markToResizeBottomIndex,
+            mark: {
+              ...markBottomToResize,
+              inResizingBottom: true,
+            },
+          })
+        );
       } else if (
         canvasModeRef.current === CANVAS_MODES.markMode &&
         isMarkingRef.current &&
@@ -256,6 +274,10 @@ function ImageArea2() {
 
       const markToResizeTopIndex = marksStateRef.current.findIndex(
         (mark) => mark.inResizingTop === true
+      );
+
+      const markToResizeBottomIndex = marksStateRef.current.findIndex(
+        (mark) => mark.inResizingBottom === true
       );
 
       if (lineToMoveIndex !== -1) {
@@ -340,6 +362,19 @@ function ImageArea2() {
             },
           })
         );
+      } else if (markToResizeBottomIndex !== -1) {
+        const markBottomToResize =
+          marksStateRef.current[markToResizeBottomIndex];
+        dispatch(
+          editMark({
+            index: markToResizeBottomIndex,
+            mark: {
+              ...markBottomToResize,
+              h: markBottomToResize.h + p5.mouseY - p5.pmouseY,
+              hImage: convertToRealScale(markBottomToResize.h),
+            },
+          })
+        );
       } else if (
         canvasModeRef.current === CANVAS_MODES.markMode &&
         isMarkingRef.current
@@ -413,6 +448,7 @@ function ImageArea2() {
               inResizingLeft: false,
               inResizingRight: false,
               inResizingTop: false,
+              inResizingBottom: false,
             },
           })
         );
