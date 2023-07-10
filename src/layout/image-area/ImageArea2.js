@@ -18,6 +18,7 @@ import {
   drawResizePointsX,
   drawResizePointsY,
   markInTranslation,
+  markInResizingLeft,
 } from "../../utils/mark.utils";
 import { CANVAS_MODES } from "../../consts/canvas.consts";
 import { addMark, editMark } from "../../store/slices/marksSlice";
@@ -137,6 +138,10 @@ function ImageArea2() {
         markInTranslation(p5, mark)
       );
 
+      const markToResizeLeftIndex = marksStateRef.current.findIndex((mark) =>
+        markInResizingLeft(p5, mark)
+      );
+
       if (lineIndex !== -1) {
         const lineToMove = linesStateRef.current[lineIndex];
 
@@ -158,6 +163,18 @@ function ImageArea2() {
             mark: {
               ...markToMove,
               inTranslation: true,
+            },
+          })
+        );
+      } else if (markToResizeLeftIndex !== -1) {
+        const markLeftToResize = marksStateRef.current[markToResizeLeftIndex];
+
+        dispatch(
+          editMark({
+            index: markToResizeLeftIndex,
+            mark: {
+              ...markLeftToResize,
+              inResizingLeft: true,
             },
           })
         );
@@ -195,6 +212,10 @@ function ImageArea2() {
         (mark) => mark.inTranslation === true
       );
 
+      const markToResizeLeftIndex = marksStateRef.current.findIndex(
+        (mark) => mark.inResizingLeft === true
+      );
+
       if (lineToMoveIndex !== -1) {
         const lineToMove = linesStateRef.current[lineToMoveIndex];
         //update the values of lines
@@ -226,6 +247,25 @@ function ImageArea2() {
               yImage: convertToRealScale(
                 markToMove.y + imgStateRef.current.y - imgStateRef.current.toy
               ),
+            },
+          })
+        );
+      } else if (markToResizeLeftIndex !== -1) {
+        const markLeftToResize = marksStateRef.current[markToResizeLeftIndex];
+        console.log(markLeftToResize.x);
+        dispatch(
+          editMark({
+            index: markToResizeLeftIndex,
+            mark: {
+              ...markLeftToResize,
+              x: markLeftToResize.x + p5.mouseX - p5.pmouseX,
+              xImage: convertToRealScale(
+                markLeftToResize.x +
+                  imgStateRef.current.x -
+                  imgStateRef.current.tox
+              ),
+              w: markLeftToResize.w - (p5.mouseX - p5.pmouseX),
+              wImage: convertToRealScale(markLeftToResize.w),
             },
           })
         );
@@ -296,7 +336,7 @@ function ImageArea2() {
         dispatch(
           editMark({
             index: i,
-            mark: { ...mark, inTranslation: false },
+            mark: { ...mark, inTranslation: false, inResizingLeft: false },
           })
         );
       });

@@ -9,4 +9,5 @@ export const DEFAULT_MARK = {
   hImage: 0,
   translationPoint: null,
   inTranslation: false,
+  inResizingLeft: false,
 };
