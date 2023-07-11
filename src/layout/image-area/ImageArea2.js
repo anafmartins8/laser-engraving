@@ -73,6 +73,8 @@ function ImageArea2() {
             tow: p1.width * initialScale,
             h: p1.height * initialScale,
             toh: p1.height * initialScale,
+            wcontainer: wcontainer,
+            hcontainer: hcontainer,
           };
           dispatch(setImg(preloadedImg));
         },

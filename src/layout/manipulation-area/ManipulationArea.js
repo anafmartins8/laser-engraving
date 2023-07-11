@@ -5,14 +5,22 @@ import { FaVectorSquare } from "react-icons/fa";
 import { TbArrowRightSquare } from "react-icons/tb"; //BsBoundingBoxCircles BsBoundingBox
 import { useSelector, useDispatch } from "react-redux";
 import { CANVAS_MODES } from "../../consts/canvas.consts";
-import { resetCanvas, switchCanvasMode } from "../../store/slices/canvasSlice";
+import {
+  setImg,
+  resetCanvas,
+  switchCanvasMode,
+  editLine,
+} from "../../store/slices/canvasSlice";
 import "./ManipulationArea.css";
-import { toggleIsMarking } from "../../store/slices/marksSlice";
-import { resetMarks } from "../../store/slices/marksSlice";
+import {
+  toggleIsMarking,
+  resetMarks,
+  editMark,
+} from "../../store/slices/marksSlice";
 
 function ManipulationArea() {
-  const { canvasMode } = useSelector((state) => state.canvas);
-  const { isMarking } = useSelector((state) => state.marks);
+  const { canvasMode, img, lines } = useSelector((state) => state.canvas);
+  const { marks, isMarking } = useSelector((state) => state.marks);
   const dispatch = useDispatch();
 
   const onAddMarkClick = () => {
@@ -22,6 +30,92 @@ function ManipulationArea() {
   const handleResetStore = () => {
     dispatch(resetCanvas());
     dispatch(resetMarks());
+  };
+
+  const handleZoomIn = () => {
+    const { zoom, wcontainer, hcontainer } = img;
+
+    dispatch(
+      setImg({
+        ...img,
+        tox: img.tox - zoom * (wcontainer / 2 - img.tox),
+        toy: img.toy - zoom * (hcontainer / 2 - img.toy),
+        tow: img.tow * (zoom + 1),
+        toh: img.toh * (zoom + 1),
+        scale: (img.tow * (zoom + 1)) / img.wi,
+      })
+    );
+
+    console.log(lines);
+
+    lines.forEach((line, i) => {
+      dispatch(
+        editLine({
+          index: i,
+          line: {
+            ...line,
+            y: line.y - zoom * (hcontainer / 2 - line.y),
+          },
+        })
+      );
+    });
+
+    marks.forEach((mark, i) => {
+      dispatch(
+        editMark({
+          index: i,
+          mark: {
+            ...mark,
+            x: mark.x - zoom * (wcontainer / 2 - mark.x),
+            y: mark.y - zoom * (hcontainer / 2 - mark.y),
+            w: mark.w * (zoom + 1),
+            h: mark.h * (zoom + 1),
+          },
+        })
+      );
+    });
+  };
+
+  const handleZoomOut = () => {
+    const { wi, tox, toy, tow, toh, zoom, wcontainer, hcontainer } = img;
+
+    dispatch(
+      setImg({
+        ...img,
+        tox: tox + (zoom / (zoom + 1)) * (wcontainer / 2 - tox),
+        toy: toy + (zoom / (zoom + 1)) * (hcontainer / 2 - toy),
+        tow: tow / (zoom + 1),
+        toh: toh / (zoom + 1),
+        scale: tow / (zoom + 1) / wi,
+      })
+    );
+
+    lines.forEach((line, i) => {
+      dispatch(
+        editLine({
+          index: i,
+          line: {
+            ...line,
+            y: line.y + (zoom / (zoom + 1)) * (hcontainer / 2 - line.y),
+          },
+        })
+      );
+    });
+
+    marks.forEach((mark, i) => {
+      dispatch(
+        editMark({
+          index: i,
+          mark: {
+            ...mark,
+            x: mark.x + (zoom / (zoom + 1)) * (wcontainer / 2 - mark.x),
+            y: mark.y + (zoom / (zoom + 1)) * (hcontainer / 2 - mark.y),
+            w: mark.w / (zoom + 1),
+            h: mark.h / (zoom + 1),
+          },
+        })
+      );
+    });
   };
 
   const isInLineMode = canvasMode === CANVAS_MODES.roiMode;
@@ -38,12 +132,12 @@ function ManipulationArea() {
         </button>
       </div>
       <div>
-        <button type="button" className="button-info">
+        <button type="button" className="button-info" onClick={handleZoomIn}>
           <RiZoomInLine title="Zoom in" />
         </button>
       </div>
       <div>
-        <button type="button" className="button-info">
+        <button type="button" className="button-info" onClick={handleZoomOut}>
           <RiZoomOutLine title="Zoom out" />
         </button>
       </div>

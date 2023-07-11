@@ -4,6 +4,8 @@ export const DEFAULT_IMAGE = {
   tox: 0,
   toy: 0,
   initialScale: 1,
+  wcontainer: 0,
+  hcontainer: 0,
   scale: 1,
   wi: 0,
   w: 0,
