@@ -121,6 +121,7 @@ function ManipulationArea() {
   };
 
   const isInLineMode = canvasMode === CANVAS_MODES.roiMode;
+  const MAX_LINES = 2;
   const MAX_MARKS = 5;
 
   return (
@@ -151,6 +152,7 @@ function ManipulationArea() {
             className={`button-info square-icon${
               isInLineMode ? " button-info-selected" : ""
             }`}
+            disabled={lines.length === MAX_LINES}
           >
             <TbArrowRightSquare title="Draw lines" />
           </button>
