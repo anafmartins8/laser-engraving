@@ -33,16 +33,17 @@ function ManipulationArea() {
   };
 
   const handleZoomIn = () => {
-    const { zoom, wcontainer, hcontainer } = img;
+    const { tox, toy, tow, toh, wi, zoom, wcontainer, hcontainer } = img;
+    if (tow * (zoom + 1) > 4 * wi) return;
 
     dispatch(
       setImg({
         ...img,
-        tox: img.tox - zoom * (wcontainer / 2 - img.tox),
-        toy: img.toy - zoom * (hcontainer / 2 - img.toy),
-        tow: img.tow * (zoom + 1),
-        toh: img.toh * (zoom + 1),
-        scale: (img.tow * (zoom + 1)) / img.wi,
+        tox: tox - zoom * (wcontainer / 2 - tox),
+        toy: toy - zoom * (hcontainer / 2 - toy),
+        tow: tow * (zoom + 1),
+        toh: toh * (zoom + 1),
+        scale: (tow * (zoom + 1)) / wi,
       })
     );
 
@@ -77,7 +78,8 @@ function ManipulationArea() {
   };
 
   const handleZoomOut = () => {
-    const { wi, tox, toy, tow, toh, zoom, wcontainer, hcontainer } = img;
+    const { tox, toy, tow, toh, wi, zoom, wcontainer, hcontainer } = img;
+    if (tow / (zoom + 1) < wi) return;
 
     dispatch(
       setImg({
