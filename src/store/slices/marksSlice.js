@@ -28,10 +28,22 @@ export const marksSlice = createSlice({
     toggleIsMarking: (state) => {
       state.isMarking = !state.isMarking;
     },
+    changeToDragMode: (state) => {
+      return {
+        ...state,
+        isMarking: false,
+      };
+    },
   },
 });
 
-export const { addMark, editMark, deleteMark, resetMarks, toggleIsMarking } =
-  marksSlice.actions;
+export const {
+  addMark,
+  editMark,
+  deleteMark,
+  resetMarks,
+  toggleIsMarking,
+  changeToDragMode,
+} = marksSlice.actions;
 
 export default marksSlice.reducer;

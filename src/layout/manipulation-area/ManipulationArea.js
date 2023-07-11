@@ -121,6 +121,7 @@ function ManipulationArea() {
   };
 
   const isInLineMode = canvasMode === CANVAS_MODES.roiMode;
+  const MAX_MARKS = 5;
 
   return (
     <div className="zoom-container">
@@ -163,6 +164,7 @@ function ManipulationArea() {
               isMarking ? " button-info-selected" : ""
             }`}
             onClick={onAddMarkClick}
+            disabled={marks.length === MAX_MARKS}
           >
             <FaVectorSquare title="Draw rectangles" />
           </button>

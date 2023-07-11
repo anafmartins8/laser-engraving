@@ -24,7 +24,11 @@ import {
   markInResizingBottom,
 } from "../../utils/mark.utils";
 import { CANVAS_MODES } from "../../consts/canvas.consts";
-import { addMark, editMark } from "../../store/slices/marksSlice";
+import {
+  addMark,
+  editMark,
+  changeToDragMode,
+} from "../../store/slices/marksSlice";
 
 const MAX_LINES = 2;
 const MAX_MARKS = 5;
@@ -431,6 +435,11 @@ function ImageArea2() {
     };
 
     p5.mouseReleased = () => {
+      //prevent drawing marks
+      if (marksStateRef.current.length === MAX_MARKS) {
+        dispatch(changeToDragMode());
+      }
+
       linesStateRef.current.forEach((line, i) => {
         dispatch(
           editLine({

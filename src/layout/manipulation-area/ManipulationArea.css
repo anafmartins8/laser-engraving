@@ -8,6 +8,11 @@
   background-color: #2fa5dc;
   color: #ffffff;
 }
+
+.button-info:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
   
 .button-info svg {
   font-size: 1.6em;
