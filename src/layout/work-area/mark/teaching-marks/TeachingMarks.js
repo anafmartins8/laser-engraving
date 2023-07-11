@@ -17,9 +17,13 @@ function TeachingMarks() {
         <table>
           <thead>
             <tr>
-              <th className="centered">Point Number</th>
-              <th className="centered">Window</th>
-              <th className="centered">Mark Point</th>
+              <th className="centered">Mark Number</th>
+              <th className="centered">
+                Mark Point <i>(x, y)</i>
+              </th>
+              <th className="centered">
+                Window <i>(w, h)</i>
+              </th>
               <th className="centered"></th>
             </tr>
           </thead>
@@ -27,8 +31,8 @@ function TeachingMarks() {
             {marks.map((mark, index) => (
               <tr key={index}>
                 <td className="centered">{index + 1}</td>
-                <td className="centered">{`(${mark.wImage}, ${mark.hImage})`}</td>
                 <td className="centered">{`(${mark.xImage}, ${mark.yImage})`}</td>
+                <td className="centered">{`(${mark.wImage}, ${mark.hImage})`}</td>
                 <td className="centered">
                   {" "}
                   <BsFillTrashFill onClick={() => onDeleteMark(index)} />

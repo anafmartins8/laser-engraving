@@ -36,7 +36,7 @@ function BottomSidewall() {
               <thead>
                 <tr>
                   <th className="centered">Line Number</th>
-                  <th className="centered">Y Image</th>
+                  <th className="centered">Y Coordinate</th>
                   <th className="centered"></th>
                 </tr>
               </thead>
